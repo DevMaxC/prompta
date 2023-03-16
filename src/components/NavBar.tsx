@@ -30,6 +30,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import { Button } from "./ui/button";
 
 export function Nav() {
   const { data: session } = useSession();
@@ -41,30 +42,39 @@ export function Nav() {
       </div>
       <div className="flex items-center gap-4">
         {session && (
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <Link href="/workflows">Workflows</Link>
             <Link href="/blocks">Blocks</Link>
             <Link href="/playground">Playground</Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="rounded-full p-0.5">
+                <Avatar>
+                  <AvatarImage src={session?.user?.image || ""} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href={"/settings"}>Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Subscription</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut()}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full p-0.5">
-            <Avatar>
-              <AvatarImage src={session?.user?.image || ""} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={"/settings"}>Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Account</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!session && (
+          <div className="flex items-center gap-4">
+            <Button onClick={() => signIn()}>Sign In</Button>
+          </div>
+        )}
       </div>
     </nav>
   );
