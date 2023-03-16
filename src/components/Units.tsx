@@ -189,7 +189,7 @@ function UnitModal({ unit }: UnitModalProps) {
         setIsErronious(false);
         setErrorMessage("");
       }
-    } catch (e) {
+    } catch (e: any) {
       setIsErronious(true);
       setErrorMessage(e.message);
     }
