@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Nav } from "~/components/NavBar";
+import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
-
 
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
@@ -21,16 +21,15 @@ export default function Blocks() {
         <div className="p-4">
           <div className="flex w-full justify-between">
             <h1 className="text-xl font-semibold">My Blocks</h1>
-            <button
+            <Button
               onClick={() =>
                 createBlockMutation.mutate({
                   name: "New Block",
                 })
               }
-              className="rounded-lg bg-blue-300 p-2 text-gray-800 transition hover:bg-blue-400 hover:text-black"
             >
               Create Block
-            </button>
+            </Button>
           </div>
         </div>
         <div className="grid w-full grid-cols-4 justify-center gap-4 p-4">
