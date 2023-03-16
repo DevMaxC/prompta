@@ -74,7 +74,7 @@ export default function Units({ id, refetch }: UnitProps) {
 
   return (
     <Collapsible defaultOpen>
-      <div className="w-full rounded-lg border p-4">
+      <div className="w-full  rounded-lg border-2 border-black/30 p-4">
         <div className="flex justify-between">
           <h1 className="text-lg font-semibold">
             Units - {unitsQuery.data?.length || 0}

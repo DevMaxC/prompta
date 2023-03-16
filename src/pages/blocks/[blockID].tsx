@@ -39,7 +39,7 @@ export default function BlockDesign() {
       <div>
         <Nav />
       </div>
-      <div className="flex flex-col gap-4 p-4">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 p-4">
         <div className="p-4">
           <div className="flex w-full justify-between">
             <h1 className="text-xl font-semibold">Block Design</h1>
@@ -98,7 +98,7 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
   }
 
   return (
-    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border p-4 drop-shadow md:col-span-2 ">
+    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border-2 border-black/30 p-4 md:col-span-2 ">
       <div className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-scroll p-4">
         {messages &&
           messages.map((message, index) => {
@@ -190,39 +190,8 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
 
 function SideBar() {
   return (
-    <div className="col-span-1 aspect-video h-full w-full rounded-lg border p-4 drop-shadow ">
+    <div className="col-span-1 aspect-video h-full w-full rounded-lg border-2 border-black/30 p-4 ">
       <h1>Total Length: {4}</h1>
     </div>
-  );
-}
-
-interface MessageProps {
-  role: string;
-  content: string;
-  index: number;
-  messages: any;
-  setMessages: any;
-}
-
-function AreaInput({
-  role,
-  content,
-  index,
-  messages,
-  setMessages,
-}: MessageProps) {
-  return (
-    <textarea
-      className="h-max grow rounded-lg border border-black/20 bg-transparent p-2 text-white placeholder-slate-200"
-      placeholder={role + " message text"}
-      defaultValue={content}
-      onInput={(e) => {
-        let newMessages = [...messages];
-        newMessages[index].content = e.currentTarget.value;
-        console.log("updated");
-        console.log(messages);
-        setMessages(newMessages);
-      }}
-    />
   );
 }

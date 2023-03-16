@@ -16,7 +16,7 @@ export default function settings() {
         <Nav />
       </div>
 
-      <div className="flex flex-col p-4">
+      <div className="mx-auto flex max-w-6xl flex-col p-4">
         <h1 className="p-2 text-lg font-bold">Settings</h1>
         <div className="flex flex-col gap-2 rounded-lg border bg-white p-4">
           <Label htmlFor="key">Open AI Key</Label>

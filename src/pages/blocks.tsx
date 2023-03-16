@@ -10,8 +10,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useEffect, useRef, useState } from "react";
+import { FocusEvent, useEffect, useRef, useState } from "react";
 import { never } from "zod";
+import { useRouter } from "next/router";
 
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
@@ -27,7 +28,7 @@ export default function Blocks() {
       <div>
         <Nav />
       </div>
-      <div className="p-4">
+      <div className="mx-auto max-w-6xl p-4">
         <div className="p-4">
           <div className="flex w-full justify-between">
             <h1 className="text-xl font-semibold">My Blocks</h1>
@@ -68,10 +69,12 @@ function Block({ title, description, id, refetch }: BlockProps) {
     onSuccess: () => refetch(),
   });
 
+  const router = useRouter();
+
   const updateBlockMutation = api.blocks.updateBlock.useMutation();
 
   const blockLinkBehaviour = () => {
-    console.log("Clicked");
+    router.push(`/blocks/${id}`);
   };
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -84,13 +87,24 @@ function Block({ title, description, id, refetch }: BlockProps) {
     }
   }, [isFocused]);
 
-  const handleFocus = () => {
-    setIsFocused(true);
+  const handleFocus = (e: FocusEvent<HTMLDivElement, Element>) => {
+    if (!nameInputRef.current?.contains(e.target as Node)) {
+      setIsFocused(true);
+    }
   };
 
-  const handleBlur = () => {
-    setIsFocused(false);
+  const handleBlur = (e: FocusEvent<HTMLDivElement, Element>) => {
+    const { relatedTarget } = e;
+    if (!relatedTarget || relatedTarget.tagName !== "INPUT") {
+      setIsFocused(false);
+    }
   };
+
+  useEffect(() => {
+    if (isFocused) {
+      nameInputRef.current?.focus();
+    }
+  }, [isFocused]);
 
   return (
     <ContextMenu>
@@ -98,10 +112,16 @@ function Block({ title, description, id, refetch }: BlockProps) {
         <div
           ref={divRef}
           tabIndex={0}
-          onDoubleClick={() => {
-            blockLinkBehaviour();
+          onDoubleClick={(e) => {
+            if (e.currentTarget !== nameInputRef.current) {
+              blockLinkBehaviour();
+            }
           }}
-          onFocus={handleFocus}
+          onFocus={(e) => {
+            if (e.currentTarget !== nameInputRef.current) {
+              handleFocus(e);
+            }
+          }}
           onBlur={handleBlur}
           className={`relative w-full rounded-lg border bg-white p-2 transition hover:drop-shadow ${
             isFocused ? "ring-2 ring-blue-500" : ""
@@ -112,9 +132,13 @@ function Block({ title, description, id, refetch }: BlockProps) {
             <div className="flex justify-between p-2">
               {title && (
                 <Input
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                  }}
                   ref={nameInputRef}
                   contentEditable
                   defaultValue={title}
+                  tabIndex={2}
                   onChange={(e) => {
                     console.log(e.currentTarget.value);
                     updateBlockMutation.mutate({
@@ -125,7 +149,14 @@ function Block({ title, description, id, refetch }: BlockProps) {
                   className="border-none bg-transparent p-2 font-semibold outline-none focus:ring-0 focus:ring-offset-0"
                 />
               )}
-              <Button variant={"link"}>Visit</Button>
+              <Button
+                onClick={() => {
+                  blockLinkBehaviour();
+                }}
+                variant={"link"}
+              >
+                Visit
+              </Button>
             </div>
           </div>
         </div>
@@ -133,13 +164,19 @@ function Block({ title, description, id, refetch }: BlockProps) {
       <ContextMenuContent>
         <ContextMenuItem
           onClick={() => {
-            nameInputRef.current?.focus();
+            setIsFocused(true);
           }}
         >
           Rename
         </ContextMenuItem>
 
-        <ContextMenuItem>Visit</ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => {
+            blockLinkBehaviour();
+          }}
+        >
+          Visit
+        </ContextMenuItem>
         <ContextMenuItem
           onClick={() => {
             deleteBlockMutation.mutate({ id });

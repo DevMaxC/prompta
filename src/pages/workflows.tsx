@@ -14,7 +14,7 @@ export default function Workflows() {
       <div>
         <Nav />
       </div>
-      <div className="p-4">
+      <div className="mx-auto max-w-6xl p-4">
         <div className="flex items-end justify-between">
           <h1 className="text-xl font-semibold">
             Workflows - {allFlows.data?.length || 0}
