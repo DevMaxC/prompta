@@ -120,7 +120,7 @@ export const batchRouter = createTRPCRouter({
                 .findUnique({
                   where: { id: input.blockId },
                 })
-                .then((block) => {
+                .then(async (block) => {
                   if (block == null) {
                     throw new TRPCError({ code: "BAD_REQUEST" });
                   }
@@ -136,32 +136,36 @@ export const batchRouter = createTRPCRouter({
 
                   console.log(messages);
 
-                  const completion = openai.createChatCompletion({
-                    model: "gpt-3.5-turbo",
-                    messages: messages,
-                  });
+                  const completion = await openai
+                    .createChatCompletion({
+                      model: "gpt-3.5-turbo",
+                      messages: messages,
+                    })
+                    .then(async (completion) => {
+                      const response = completion.data.choices[0]?.message;
 
-                  completion.then(async (completion) => {
-                    const response = completion.data.choices[0]?.message;
+                      console.log(response);
 
-                    console.log(response);
+                      //short uuid
+                      const uuid = Math.random().toString(36).substring(2, 15);
 
-                    //short uuid
-                    const uuid = Math.random().toString(36).substring(2, 15);
-
-                    await ctx.prisma.testCompletion.create({
-                      data: {
-                        actual: response?.content || "<No response>",
-                        expected: ideal,
-                        content: unit.content,
-                        batch: {
-                          connect: { id: newBatch.id },
+                      await ctx.prisma.testCompletion.create({
+                        data: {
+                          actual: response?.content || "<No response>",
+                          expected: ideal,
+                          content: unit.content,
+                          batch: {
+                            connect: { id: newBatch.id },
+                          },
+                          name: unit.name + "-" + uuid,
+                          success: response?.content.includes(ideal) || false,
                         },
-                        name: unit.name + "-" + uuid,
-                        success: response?.content.includes(ideal) || false,
-                      },
+                      });
+                    })
+                    .catch((err) => {
+                      console.log("error");
+                      console.log(messages);
                     });
-                  });
                 });
             }
           }

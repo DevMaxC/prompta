@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Nav } from "~/components/NavBar";
 import { api } from "~/utils/api";
 
+
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
   const createBlockMutation = api.blocks.createBlock.useMutation({

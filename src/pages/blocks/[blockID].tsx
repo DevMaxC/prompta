@@ -18,7 +18,8 @@ import Batches from "~/components/Batches";
 import Units from "~/components/Units";
 
 export default function BlockDesign() {
-  const ID = useRouter().query.blockID as string;
+  const router = useRouter();
+  const ID = router.query.blockID as string;
 
   const blockQuery = api.blocks.getBlock.useQuery(
     {
