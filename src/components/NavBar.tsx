@@ -67,9 +67,9 @@ function UserProfileButton() {
             <h1 className="py-2 opacity-70">Personal</h1>
             <Separator />
             <div className="flex flex-col gap-1 py-2">
-              <Link href={"/Settings"}> Settings </Link>
-              <Link href={"/Account"}> Account </Link>
-              <Link href={"/Billing"}> Billing </Link>
+              <Link href={"/settings"}> Settings </Link>
+              <Link href={"/account"}> Account </Link>
+              <Link href={"/billing"}> Billing </Link>
               <button onClick={() => signOut()}>Sign out</button>
             </div>
           </div>
