@@ -147,7 +147,7 @@ export default function Units({ id, refetch }: UnitProps) {
             onClick={() => {
               createUnit.mutate({
                 name: "New Unit",
-                content: `{\nvariable: 'example'\n}\n`,
+                content: `{\n"variable": "example",\n"ideal":"value"\n}\n`,
                 blockId: id,
               });
             }}
