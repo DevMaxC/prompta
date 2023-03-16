@@ -113,6 +113,12 @@ export const batchRouter = createTRPCRouter({
           const jsonised = JSON.parse(unit.content);
 
           const ideal = jsonised.ideal;
+          if (ideal == null) {
+            throw new TRPCError({
+              message: "No ideal was set in your unit.",
+              code: "BAD_REQUEST",
+            });
+          }
 
           for (const key in jsonised) {
             if (key !== "ideal") {
@@ -163,6 +169,7 @@ export const batchRouter = createTRPCRouter({
                       });
                     })
                     .catch((err) => {
+                      console.log(err);
                       console.log("error");
                       console.log(messages);
                     });

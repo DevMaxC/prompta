@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Batch } from "@prisma/client";
+import { useEffect } from "react";
 
 import { api } from "~/utils/api";
 
@@ -18,7 +19,10 @@ export default function Batches({ id, setRefresh }: BatchesProps) {
     { enabled: !!id }
   );
 
-  setRefresh(() => batches.refetch);
+  useEffect(() => {
+    setRefresh(() => batches.refetch);
+  }, [batches.refetch]);
+
   return (
     <div className="rounded-lg border p-4">
       <h1 className="text-lg font-semibold">
@@ -28,8 +32,8 @@ export default function Batches({ id, setRefresh }: BatchesProps) {
         {batches.data
           ?.slice()
           .reverse()
-          .map((batch) => (
-            <AccordionItem value={batch.id}>
+          .map((batch, index) => (
+            <AccordionItem key={index} value={batch.id}>
               <AccordionTrigger>{batch.name}</AccordionTrigger>
               <AccordionContent>
                 <BatchItem batch={batch} />
@@ -52,6 +56,7 @@ function BatchItem({ batch }: { batch: Batch }) {
       <Accordion type="single" collapsible>
         {completions.data?.map((completion, id) => (
           <AccordionItem
+            key={id}
             className={` ${
               completion.success ? "bg-green-300" : "bg-red-500"
             } drop-shadow-lg`}

@@ -46,10 +46,12 @@ export default function BlockDesign() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-          <TemplateEditor
-            id={blockQuery.data?.id as string}
-            inputmessages={blockQuery.data?.messages}
-          />
+          {blockQuery.data && (
+            <TemplateEditor
+              id={blockQuery.data?.id as string}
+              inputmessages={blockQuery.data?.messages}
+            />
+          )}
           <SideBar />
         </div>
         <Units refetch={refreshBatches} id={ID} />
@@ -71,26 +73,28 @@ interface BlockProps {
 function TemplateEditor({ id, inputmessages }: BlockProps) {
   // content in schema array of {role: string, content: string}
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(
+    inputmessages as Message[]
+  );
   const updateMessage = api.blocks.updateMessage.useMutation();
 
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    if (inputmessages) {
-      setMessages([...(inputmessages as Message[])]);
-    }
-  }, [inputmessages]);
-
-  useEffect(() => {
-    if (messages) {
+    if (count > 0) {
       updateMessage.mutate({
         id: id,
         data: messages,
       });
     }
+    setCount(count + 1);
   }, [messages]);
 
   function addBlock(role: string) {
-    setMessages([...messages, { role: role, content: " " }]);
+    if (messages) {
+      setMessages([...messages, { role: role, content: " " }]);
+    } else {
+      setMessages([{ role: role, content: " " }]);
+    }
   }
 
   return (
@@ -116,21 +120,34 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
                     </h1>
                     <button
                       onClick={() => {
-                        let newMessages = [...messages];
-                        newMessages.splice(index, 1);
+                        let newMessages = [
+                          ...messages.splice(0, index),
+                          ...messages.splice(index + 1),
+                        ];
+
                         setMessages(newMessages);
                       }}
                     >
                       Delete
                     </button>
                   </div>
-                  {message.content && (
-                    <AreaInput
-                      role={message.role}
-                      content={message.content}
-                      index={index}
-                      messages={messages}
-                      setMessages={setMessages}
+                  {message && (
+                    <textarea
+                      className="h-max grow rounded-lg border border-black/20 bg-transparent p-2 text-white placeholder-slate-200"
+                      placeholder={message.role + " message text"}
+                      defaultValue={message.content}
+                      onInput={(e) => {
+                        let newMessages = [
+                          ...messages.splice(0, index),
+                          {
+                            role: message.role,
+                            content: e.currentTarget.value,
+                          },
+                          ...messages.splice(index + 1),
+                        ];
+
+                        setMessages(newMessages);
+                      }}
                     />
                   )}
                 </div>
@@ -202,7 +219,8 @@ function AreaInput({
       onInput={(e) => {
         let newMessages = [...messages];
         newMessages[index].content = e.currentTarget.value;
-
+        console.log("updated");
+        console.log(messages);
         setMessages(newMessages);
       }}
     />
