@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import {
   ForwardRefExoticComponent,
   RefAttributes,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -173,6 +174,27 @@ function UnitModal({ unit }: UnitModalProps) {
   });
 
   const [text, setText] = useState(unit.content);
+  const [isErronious, setIsErronious] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    try {
+      const myObj = JSON.parse(text);
+      // check if json has the key ideal
+
+      if (!myObj.hasOwnProperty("ideal")) {
+        setErrorMessage("Your json should have a key called ideal");
+        setIsErronious(true);
+      } else {
+        setIsErronious(false);
+        setErrorMessage("");
+      }
+    } catch (e) {
+      setIsErronious(true);
+      setErrorMessage(e.message);
+    }
+  }, [text]);
+
   return (
     <Dialog>
       <DialogTrigger ref={triggerRef} asChild>
@@ -188,11 +210,14 @@ function UnitModal({ unit }: UnitModalProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <h1 className="mb-2 text-xs">{errorMessage}</h1>
           <div className="grid grid-cols-4 items-center gap-4">
             <Textarea
               id="name"
               defaultValue={text}
-              className="col-span-4 whitespace-nowrap"
+              className={`${
+                isErronious ? " focus:ring-red-500" : " focus:ring-green-500"
+              } col-span-4 whitespace-nowrap ring-2 ring-offset-2 `}
               onChange={(e) => {
                 setText(e.currentTarget.value);
               }}
