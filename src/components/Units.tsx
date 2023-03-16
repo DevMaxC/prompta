@@ -202,43 +202,62 @@ function UnitModal({ unit }: UnitModalProps) {
           Edit Unit
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit unit</DialogTitle>
-          <DialogDescription>
-            Change parts of your unit. Each variable should be included here.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <h1 className="mb-2 text-xs">{errorMessage}</h1>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Textarea
-              id="name"
-              defaultValue={text}
-              className={`${
-                isErronious ? " focus:ring-red-500" : " focus:ring-green-500"
-              } col-span-4 whitespace-nowrap ring-2 ring-offset-2 `}
-              onChange={(e) => {
-                setText(e.currentTarget.value);
-              }}
-            />
+      <Collapsible>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit unit</DialogTitle>
+            <DialogDescription>
+              Change parts of your unit. Each variable should be included here.
+              <span>
+                <CollapsibleTrigger className="aspect-square h-4 w-4 rounded-full bg-blue-500 text-xs text-white">
+                  i
+                </CollapsibleTrigger>
+              </span>
+            </DialogDescription>
+
+            <CollapsibleContent>
+              <DialogDescription>
+                A variable can be created in your template by surrounding any
+                word with curly braces. When the code is ran, if there is a
+                corresponding variable in the unit, it will fill in the value.
+              </DialogDescription>
+              <DialogDescription>
+                Include a key named "ideal" in your unit. This is the value that
+                will determine if your test was a success or failure.
+              </DialogDescription>
+            </CollapsibleContent>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <h1 className="mb-2 text-xs">{errorMessage}</h1>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Textarea
+                id="name"
+                defaultValue={text}
+                className={`${
+                  isErronious ? " focus:ring-red-500" : " focus:ring-green-500"
+                } col-span-4 whitespace-nowrap ring-2 ring-offset-2 `}
+                onChange={(e) => {
+                  setText(e.currentTarget.value);
+                }}
+              />
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button
-            onClick={() => {
-              updateUnit.mutate({
-                id: unit.id,
-                name: unit.name,
-                content: text,
-              });
-            }}
-            type="submit"
-          >
-            Save changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                updateUnit.mutate({
+                  id: unit.id,
+                  name: unit.name,
+                  content: text,
+                });
+              }}
+              type="submit"
+            >
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Collapsible>
     </Dialog>
   );
 }
