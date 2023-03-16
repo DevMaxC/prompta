@@ -1,0 +1,83 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Batch } from "@prisma/client";
+
+import { api } from "~/utils/api";
+
+interface BatchesProps {
+  id: string;
+  setRefresh: (refresh: () => void) => void;
+}
+export default function Batches({ id, setRefresh }: BatchesProps) {
+  const batches = api.batch.getBatches.useQuery(
+    { blockId: id },
+    { enabled: !!id }
+  );
+
+  setRefresh(() => batches.refetch);
+  return (
+    <div className="rounded-lg border p-4">
+      <h1 className="text-lg font-semibold">
+        Batches - {batches.data?.length || "0"}
+      </h1>
+      <Accordion type="single" collapsible>
+        {batches.data
+          ?.slice()
+          .reverse()
+          .map((batch) => (
+            <AccordionItem value={batch.id}>
+              <AccordionTrigger>{batch.name}</AccordionTrigger>
+              <AccordionContent>
+                <BatchItem batch={batch} />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+      </Accordion>
+    </div>
+  );
+}
+
+function BatchItem({ batch }: { batch: Batch }) {
+  const completions = api.batch.getCompletions.useQuery(
+    { batchId: batch.id },
+    { enabled: !!batch.id }
+  );
+  return (
+    <div className="border-x p-4">
+      <h1>Completions - {completions.data?.length || 0}</h1>
+      <Accordion type="single" collapsible>
+        {completions.data?.map((completion, id) => (
+          <AccordionItem
+            className={` ${
+              completion.success ? "bg-green-300" : "bg-red-500"
+            } drop-shadow-lg`}
+            value={completion.id}
+          >
+            <AccordionTrigger className="p-4">
+              {completion.name +
+                " - " +
+                (completion.success ? "Success" : "Fail")}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="mx-4  p-4">
+                <h1 className="text-lg font-semibold">
+                  Ideal-{completion.expected}
+                </h1>
+                <h1 className="text-lg font-semibold">
+                  Actual-{completion.actual}
+                </h1>
+                <h1 className="text-lg font-semibold">
+                  Test Format-{completion.content?.valueOf().toLocaleString()}
+                </h1>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  );
+}
