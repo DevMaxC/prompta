@@ -35,8 +35,8 @@ export default function BlockDesign() {
   );
 
   return (
-    <main>
-      <div className="p-4">
+    <main className="min-h-screen bg-slate-100">
+      <div>
         <Nav />
       </div>
       <div className="flex flex-col gap-4 p-4">

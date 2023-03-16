@@ -10,12 +10,12 @@ export default function Workflows() {
     },
   });
   return (
-    <main>
-      <div className="p-4">
+    <main className="min-h-screen bg-slate-100">
+      <div>
         <Nav />
       </div>
       <div className="p-4">
-        <div className="flex justify-between">
+        <div className="flex items-end justify-between">
           <h1 className="text-xl font-semibold">
             Workflows - {allFlows.data?.length || 0}
           </h1>
@@ -28,7 +28,7 @@ export default function Workflows() {
         </div>
         <div className="mt-4 flex flex-col gap-2">
           {allFlows.data?.map((flow) => (
-            <div key={flow.id} className="rounded border p-4">
+            <div key={flow.id} className="rounded-lg border bg-white p-4">
               <div className="flex justify-between">
                 <h2 className="text-lg font-semibold">{flow.name}</h2>
                 <div className="flex space-x-2">

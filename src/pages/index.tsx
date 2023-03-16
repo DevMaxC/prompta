@@ -3,8 +3,8 @@ import { Nav } from "~/components/NavBar";
 
 const Home: NextPage = () => {
   return (
-    <main className="w-screen">
-      <div className="p-4">
+    <main className="min-h-screen bg-slate-100">
+      <div>
         <Nav />
       </div>
     </main>

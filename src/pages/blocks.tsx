@@ -1,7 +1,16 @@
 import Link from "next/link";
 import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
+
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { useRef } from "react";
 
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
@@ -13,8 +22,8 @@ export default function Blocks() {
   });
 
   return (
-    <main>
-      <div className="p-4">
+    <main className="min-h-screen bg-slate-100">
+      <div>
         <Nav />
       </div>
       <div className="p-4">
@@ -58,24 +67,62 @@ function Block({ title, description, id, refetch }: BlockProps) {
     onSuccess: () => refetch(),
   });
 
+  const updateBlockMutation = api.blocks.updateBlock.useMutation();
+
+  const blockLinkBehaviour = () => {
+    console.log("Clicked");
+  };
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div className="relative w-full rounded-lg bg-red-500 p-2">
-      <Link href={"/blocks/" + id}>
-        <div className="p-2">
-          <h1 className="text-xl font-semibold">{title}</h1>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <div className="relative w-full rounded-lg border bg-white p-2">
+          <div
+            onClick={() => {
+              blockLinkBehaviour();
+            }}
+          >
+            <div className="flex justify-between p-2">
+              {title && (
+                <Input
+                  ref={nameInputRef}
+                  contentEditable
+                  defaultValue={title}
+                  onChange={(e) => {
+                    console.log(e.currentTarget.value);
+                    updateBlockMutation.mutate({
+                      id,
+                      name: e.currentTarget.value,
+                    });
+                  }}
+                  className="border-none bg-transparent p-2 font-semibold outline-none focus:ring-0 focus:ring-offset-0"
+                />
+              )}
+              <Button variant={"link"}>Visit</Button>
+            </div>
+          </div>
         </div>
-        <div className="p-2">
-          <p>{description}</p>
-        </div>
-      </Link>
-      <button
-        onClick={() => {
-          deleteBlockMutation.mutate({ id: id });
-        }}
-        className="absolute top-2 right-2 rounded-full bg-white px-2"
-      >
-        X
-      </button>
-    </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem
+          onClick={() => {
+            nameInputRef.current?.focus();
+          }}
+        >
+          Rename
+        </ContextMenuItem>
+
+        <ContextMenuItem>Visit</ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => {
+            deleteBlockMutation.mutate({ id });
+          }}
+        >
+          Delete
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }

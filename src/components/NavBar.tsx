@@ -35,7 +35,7 @@ export function Nav() {
   const { data: session } = useSession();
 
   return (
-    <nav className="flex w-full items-center justify-between rounded-lg bg-slate-200 p-4">
+    <nav className="flex w-full items-center justify-between border-b border-black/10 p-4">
       <div>
         <h1 className="text-xl font-semibold">Prompta</h1>
       </div>
@@ -45,7 +45,6 @@ export function Nav() {
             <Link href="/workflows">Workflows</Link>
             <Link href="/blocks">Blocks</Link>
             <Link href="/playground">Playground</Link>
-            <Link href="/dashboard">Dashboard</Link>
           </div>
         )}
         <DropdownMenu>

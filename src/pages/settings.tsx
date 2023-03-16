@@ -11,14 +11,14 @@ export default function settings() {
 
   const user = api.user.getUser.useQuery();
   return (
-    <main>
-      <div className="p-4">
+    <main className="min-h-screen bg-slate-100">
+      <div>
         <Nav />
       </div>
 
       <div className="flex flex-col p-4">
         <h1 className="p-2 text-lg font-bold">Settings</h1>
-        <div className="rounded-lg border p-4">
+        <div className="flex flex-col gap-2 rounded-lg border bg-white p-4">
           <Label htmlFor="key">Open AI Key</Label>
           <div className="relative">
             {user.data && (
