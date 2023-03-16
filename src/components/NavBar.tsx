@@ -10,6 +10,27 @@ import { Separator } from "@/components/ui/seperator";
 
 import { useState } from "react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu";
+
 export function Nav() {
   const { data: session } = useSession();
 
@@ -27,54 +48,25 @@ export function Nav() {
             <Link href="/dashboard">Dashboard</Link>
           </div>
         )}
-        <UserProfileButton />
+        <DropdownMenu>
+          <DropdownMenuTrigger className="rounded-full p-0.5">
+            <Avatar>
+              <AvatarImage src={session?.user?.image || ""} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href={"/settings"}>Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Account</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Subscription</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
-  );
-}
-
-function UserProfileButton() {
-  const { data: session } = useSession();
-
-  const [showContextMenu, setShowContextMenu] = useState(false);
-
-  if (!session) {
-    return <button onClick={() => signIn()}>Sign in</button>;
-  }
-
-  if (!session?.user?.image) {
-    return <button className="h-16 w-16 rounded-full bg-black"></button>;
-  }
-
-  return (
-    <div>
-      <button
-        onClick={() => setShowContextMenu(!showContextMenu)}
-        className="relative h-10 w-10 rounded-full bg-black"
-      >
-        {session?.user?.image && (
-          <Image
-            className=" rounded-full ring-1 ring-offset-2"
-            src={session?.user?.image}
-            alt="User profile picture"
-            fill
-          />
-        )}
-      </button>
-      <div>
-        {showContextMenu && (
-          <div className="absolute right-8 top-16 flex w-40 flex-col items-center rounded-lg border bg-slate-100 text-center">
-            <h1 className="py-2 opacity-70">Personal</h1>
-            <Separator />
-            <div className="flex flex-col gap-1 py-2">
-              <Link href={"/settings"}> Settings </Link>
-              <Link href={"/account"}> Account </Link>
-              <Link href={"/billing"}> Billing </Link>
-              <button onClick={() => signOut()}>Sign out</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }

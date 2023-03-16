@@ -20,13 +20,21 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  experimental: {
+    fontLoaders: [
+      {
+        loader: "@next/font/google",
+        options: { subsets: ["latin"] },
+      },
+    ],
+  },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'cdn.discordapp.com',
-        port: '',
-        pathname: '/avatars/**',
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+        port: "",
+        pathname: "/avatars/**",
       },
     ],
   },
