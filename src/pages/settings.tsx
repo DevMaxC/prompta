@@ -21,9 +21,9 @@ export default function settings() {
         <div className="rounded-lg border p-4">
           <Label htmlFor="key">Open AI Key</Label>
           <div className="relative">
-            {user.data?.openaiKey && (
+            {user.data && (
               <Input
-                defaultValue={user.data?.openaiKey}
+                defaultValue={user.data.openaiKey || ""}
                 onInput={(e) => {
                   keyMut.mutate({ key: e.currentTarget.value });
                 }}
