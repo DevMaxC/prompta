@@ -10,7 +10,8 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { never } from "zod";
 
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
@@ -74,16 +75,40 @@ function Block({ title, description, id, refetch }: BlockProps) {
   };
 
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isFocused && divRef.current) {
+      divRef.current.focus();
+    }
+  }, [isFocused]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
 
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div className="relative w-full rounded-lg border bg-white p-2">
-          <div
-            onClick={() => {
-              blockLinkBehaviour();
-            }}
-          >
+        <div
+          ref={divRef}
+          tabIndex={0}
+          onDoubleClick={() => {
+            blockLinkBehaviour();
+          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className={`relative w-full rounded-lg border bg-white p-2 transition hover:drop-shadow ${
+            isFocused ? "ring-2 ring-blue-500" : ""
+          }`}
+        >
+          <div className="flex h-full flex-col">
+            <div className="aspect-square w-full rounded-lg bg-red-500"></div>
             <div className="flex justify-between p-2">
               {title && (
                 <Input
