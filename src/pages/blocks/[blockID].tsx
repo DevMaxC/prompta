@@ -128,11 +128,9 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
                     </h1>
                     <button
                       onClick={() => {
-                        let newMessages = [
-                          ...messages.splice(0, index),
-                          ...messages.splice(index + 1),
-                        ];
-
+                        let newMessages = messages.filter(
+                          (_, idx) => idx !== index
+                        );
                         setMessages(newMessages);
                       }}
                     >
@@ -198,8 +196,8 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
 
 function SideBar() {
   return (
-    <div className="col-span-1 h-full w-full rounded-lg border bg-white p-4 ">
-      <h1>Total Length: {4}</h1>
+    <div className="col-span-1 flex h-full w-full items-center justify-center rounded-lg border bg-white/50 p-4 ">
+      <h1>Statistics sidebar coming soon</h1>
     </div>
   );
 }

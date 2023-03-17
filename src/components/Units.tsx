@@ -81,8 +81,8 @@ export default function Units({ id, refetch }: UnitProps) {
             Units - {unitsQuery.data?.length || 0}
           </h1>
           <div className="flex gap-4">
-            <CollapsibleTrigger className="font-semibold">
-              <Button variant={"ghost"}>Hide/Show</Button>
+            <CollapsibleTrigger className="rounded-lg px-3 font-semibold transition hover:bg-slate-100">
+              <Label className="hover:cursor-pointer">Hide/Show</Label>
             </CollapsibleTrigger>
             <Button
               disabled={
