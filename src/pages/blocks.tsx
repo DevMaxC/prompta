@@ -4,6 +4,8 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -11,7 +13,6 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { FocusEvent, useEffect, useRef, useState } from "react";
-import { never } from "zod";
 import { useRouter } from "next/router";
 
 export default function Blocks() {
@@ -22,6 +23,8 @@ export default function Blocks() {
   const deleteBlockMutation = api.blocks.deleteBlock.useMutation({
     onSuccess: () => blockQuery.refetch(),
   });
+
+  const [animationParent] = useAutoAnimate();
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -43,7 +46,10 @@ export default function Blocks() {
             </Button>
           </div>
         </div>
-        <div className="grid w-full grid-cols-4 justify-center gap-4 p-4">
+        <div
+          ref={animationParent}
+          className="grid w-full grid-cols-4 justify-center gap-4 p-4"
+        >
           {blockQuery.data?.map((block) => (
             <Block
               title={block.name}
