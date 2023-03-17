@@ -71,11 +71,17 @@ export default function Connect({ flow }: ConnectProps) {
             <CodeBlock
               code={[
                 `import requests`,
-                `requests.post("${getMyUrl()}/api/workflows/${flow.id}", {`,
-                `data: {`,
-                `"key": {YOUR_PROMPTA_API_KEY}`,
+                `import json`,
+                `payload = {`,
+                `\t"key":{YOUR_PROMPTA_API_KEY}`,
+                `\t"variables":{"variable":"value to replace 'variable' with"}    `,
                 `}`,
-                `})`,
+
+                `test = requests.post("${getMyUrl()}/api/v1/workflows/${
+                  flow.id
+                }", {`,
+                `\tdata = json.dumps(payload)`,
+                `)`,
               ]}
             />
           </TabsContent>
