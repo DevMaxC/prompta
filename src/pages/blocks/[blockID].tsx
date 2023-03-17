@@ -18,6 +18,7 @@ import Batches from "~/components/Batches";
 import Units from "~/components/Units";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { Button } from "~/components/ui/button";
 
 export default function BlockDesign() {
   const router = useRouter();
@@ -102,10 +103,10 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
   const [animationParent] = useAutoAnimate();
 
   return (
-    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border-2 border-black/30 p-4 md:col-span-2 ">
+    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border bg-white  p-4 md:col-span-2 ">
       <div
         ref={animationParent}
-        className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-scroll p-4"
+        className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-auto p-4"
       >
         {messages &&
           messages.map((message, index) => {
@@ -164,8 +165,8 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
       </div>
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="w-full rounded-lg bg-slate-500 p-2 text-white">
-          Add Message
+        <DropdownMenuTrigger>
+          <Button className="w-full">Add Message</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="text-center font-sans">
           <DropdownMenuItem
@@ -197,7 +198,7 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
 
 function SideBar() {
   return (
-    <div className="col-span-1 aspect-video h-full w-full rounded-lg border-2 border-black/30 p-4 ">
+    <div className="col-span-1 h-full w-full rounded-lg border bg-white p-4 ">
       <h1>Total Length: {4}</h1>
     </div>
   );

@@ -28,6 +28,7 @@ import {
   useState,
 } from "react";
 import { api } from "~/utils/api";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface UnitProps {
   id: string;
@@ -74,48 +75,64 @@ export default function Units({ id, refetch }: UnitProps) {
 
   return (
     <Collapsible defaultOpen>
-      <div className="w-full  rounded-lg border-2 border-black/30 p-4">
-        <div className="flex justify-between">
+      <div className="w-full rounded-lg border bg-white p-4 drop-shadow">
+        <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold">
             Units - {unitsQuery.data?.length || 0}
           </h1>
           <div className="flex gap-4">
             <CollapsibleTrigger className="font-semibold">
-              <h1>Hide/Show</h1>
+              <Button variant={"ghost"}>Hide/Show</Button>
             </CollapsibleTrigger>
-            <button onClick={runTest} className="font-semibold">
+            <Button
+              disabled={
+                unitsQuery.data && unitsQuery.data.length > 0 ? false : true
+              }
+              variant={"ghost"}
+              onClick={runTest}
+            >
               Run all tests
-            </button>
-            <button className="font-semibold">Export</button>
+            </Button>
+            <Button disabled variant={"ghost"}>
+              Export
+            </Button>
           </div>
         </div>
 
         <CollapsibleContent>
           <table className="mt-4 w-full text-center">
-            <thead className="overflow-hidden rounded-lg bg-gray-300 p-2">
-              <tr>
-                <th className="p-4">
-                  <input type="checkbox" />
-                </th>
+            {unitsQuery.data && unitsQuery.data.length > 0 && (
+              <thead className="overflow-hidden rounded-lg bg-gray-300 p-2">
+                <tr>
+                  <th className="flex items-center justify-center p-4">
+                    <Checkbox className="bg-white" />
+                  </th>
 
-                <th>Index</th>
-                <th>Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+                  <th>
+                    <Label>Index</Label>
+                  </th>
+                  <th>
+                    <Label>Name</Label>
+                  </th>
+                  <th>
+                    <Label>Actions</Label>
+                  </th>
+                </tr>
+              </thead>
+            )}
             <tbody>
               {unitsQuery.data &&
                 unitsQuery.data.map((unit, index) => {
                   return (
                     <tr className="border" key={unit.id}>
                       <td>
-                        <input type="checkbox" />
+                        <Checkbox className="bg-white" />
                       </td>
                       <td>{index}</td>
                       <td>
-                        <input
+                        <Input
                           type="text"
-                          className="py-2 text-center"
+                          className="border-none py-2 text-center"
                           defaultValue={unit.name}
                           onChange={(e) => {
                             updateUnit.mutate({
@@ -143,7 +160,7 @@ export default function Units({ id, refetch }: UnitProps) {
             </tbody>
           </table>
 
-          <button
+          <Button
             onClick={() => {
               createUnit.mutate({
                 name: "New Unit",
@@ -151,10 +168,10 @@ export default function Units({ id, refetch }: UnitProps) {
                 blockId: id,
               });
             }}
-            className=" mt-4 w-full rounded-lg bg-slate-500 p-2 text-white"
+            className=" mt-4 w-full "
           >
             Add Unit
-          </button>
+          </Button>
         </CollapsibleContent>
       </div>
     </Collapsible>
@@ -208,7 +225,7 @@ function UnitModal({ unit }: UnitModalProps) {
             <DialogTitle>Edit unit</DialogTitle>
             <DialogDescription>
               Change parts of your unit. Each variable should be included here.
-              <span>
+              <span className="mx-1">
                 <CollapsibleTrigger className="aspect-square h-4 w-4 rounded-full bg-blue-500 text-xs text-white">
                   i
                 </CollapsibleTrigger>
@@ -234,8 +251,10 @@ function UnitModal({ unit }: UnitModalProps) {
                 id="name"
                 defaultValue={text}
                 className={`${
-                  isErronious ? " focus:ring-red-500" : " focus:ring-green-500"
-                } col-span-4 whitespace-nowrap ring-2 ring-offset-2 `}
+                  isErronious
+                    ? " ring-red-500 focus:ring-red-500"
+                    : " ring-green-500 focus:ring-green-500"
+                } col-span-4 h-32 whitespace-nowrap ring-2 ring-offset-2`}
                 onChange={(e) => {
                   setText(e.currentTarget.value);
                 }}
@@ -244,6 +263,7 @@ function UnitModal({ unit }: UnitModalProps) {
           </div>
           <DialogFooter>
             <Button
+              disabled={isErronious}
               onClick={() => {
                 updateUnit.mutate({
                   id: unit.id,

@@ -24,7 +24,7 @@ export default function Batches({ id, setRefresh }: BatchesProps) {
   }, [batches.refetch]);
 
   return (
-    <div className="rounded-lg border-2 border-black/30 p-4">
+    <div className="rounded-lg border bg-white p-4 drop-shadow">
       <h1 className="text-lg font-semibold">
         Batches - {batches.data?.length || "0"}
       </h1>

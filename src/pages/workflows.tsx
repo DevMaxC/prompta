@@ -2,6 +2,20 @@ import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
+import { env } from "../env.mjs";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { useRouter } from "next/router.js";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 export default function Workflows() {
   const allFlows = api.workflow.getAll.useQuery();
   const createFlow = api.workflow.create.useMutation({
@@ -9,6 +23,9 @@ export default function Workflows() {
       allFlows.refetch();
     },
   });
+
+  const router = useRouter();
+
   return (
     <main className="min-h-screen bg-slate-100">
       <div>
@@ -32,7 +49,65 @@ export default function Workflows() {
               <div className="flex justify-between">
                 <h2 className="text-lg font-semibold">{flow.name}</h2>
                 <div className="flex space-x-2">
-                  <Button variant={"default"}>Edit</Button>
+                  <Dialog>
+                    <DialogTrigger>
+                      <Button variant={"outline"}>Connect</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Connection</DialogTitle>
+                        <DialogDescription>
+                          Connection Settings for {flow.name}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Tabs className="overflow-auto" defaultValue="JS">
+                        <TabsList>
+                          <TabsTrigger value="JS">JS</TabsTrigger>
+                          <TabsTrigger value="Python">Python</TabsTrigger>
+                        </TabsList>
+                        <TabsContent
+                          className="overflow-auto bg-slate-800"
+                          value="JS"
+                        >
+                          <CodeBlock
+                            code={[
+                              `await fetch("https://prompta-one.vercel.app/api/workflows/${flow.id}", {`,
+                              `\tmethod: "POST",`,
+                              `\theaders: {`,
+                              `\t\t"Content-Type": "application/json",`,
+                              `\t},`,
+                              `\tbody: JSON.stringify({`,
+                              `\t\tkey: {YOUR_PROMPTA_API_KEY} `,
+                              `\t}),`,
+                              `})`,
+                            ]}
+                          />
+                        </TabsContent>
+                        <TabsContent
+                          className=" w-full overflow-auto bg-slate-800"
+                          value="Python"
+                        >
+                          <CodeBlock
+                            code={[
+                              `import requests`,
+                              `requests.post("https://prompta-one.vercel.app/api/workflows/${flow.id}", {`,
+                              `data: {`,
+                              `"key": {YOUR_PROMPTA_API_KEY}`,
+                              `}`,
+                              `})`,
+                            ]}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button
+                    onClick={() => router.push(`/workflows/${flow.id}`)}
+                    variant={"default"}
+                  >
+                    View
+                  </Button>
                   <Button variant={"destructive"}>Delete</Button>
                 </div>
               </div>
@@ -41,5 +116,20 @@ export default function Workflows() {
         </div>
       </div>
     </main>
+  );
+}
+
+interface BlockProps {
+  code: string[];
+}
+function CodeBlock({ code }: BlockProps) {
+  return (
+    <div className="w-fit rounded-lg bg-slate-800 p-4">
+      <pre className="text-sm text-slate-200">
+        {code.map((line) => (
+          <div>{line}</div>
+        ))}
+      </pre>
+    </div>
   );
 }

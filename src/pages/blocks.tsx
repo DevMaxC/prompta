@@ -32,9 +32,11 @@ export default function Blocks() {
         <Nav />
       </div>
       <div className="mx-auto max-w-6xl p-4">
-        <div className="p-4">
-          <div className="flex w-full justify-between">
-            <h1 className="text-xl font-semibold">My Blocks</h1>
+        <div className="">
+          <div className="flex w-full items-end justify-between">
+            <h1 className="text-xl font-semibold">
+              My Blocks - {blockQuery.data?.length}
+            </h1>
             <Button
               onClick={() =>
                 createBlockMutation.mutate({
@@ -107,6 +109,10 @@ function Block({ title, description, id, refetch }: BlockProps) {
     }
   };
 
+  const copyBlockMutation = api.blocks.copyBlock.useMutation({
+    onSuccess: () => refetch(),
+  });
+
   useEffect(() => {
     if (isFocused) {
       nameInputRef.current?.focus();
@@ -176,6 +182,13 @@ function Block({ title, description, id, refetch }: BlockProps) {
         >
           Rename
         </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => {
+            copyBlockMutation.mutate({ id });
+          }}
+        >
+          Duplicate Block
+        </ContextMenuItem>
 
         <ContextMenuItem
           onClick={() => {
@@ -184,6 +197,7 @@ function Block({ title, description, id, refetch }: BlockProps) {
         >
           Visit
         </ContextMenuItem>
+
         <ContextMenuItem
           onClick={() => {
             deleteBlockMutation.mutate({ id });

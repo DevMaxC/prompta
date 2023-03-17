@@ -16,6 +16,37 @@ export const blocksRouter = createTRPCRouter({
 
     return blocks?.blocks;
   }),
+
+  copyBlock: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      //check if user owns block
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: { blocks: { select: { id: true } } },
+      });
+      if (!user?.blocks.some((block) => block.id === input.id)) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      } else {
+        const block = await ctx.prisma.block.findUnique({
+          where: { id: input.id },
+        });
+
+        if (!block) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+        const newBlock = await ctx.prisma.block.create({
+          data: {
+            name: block?.name + " copy",
+            messages: block?.messages || [],
+            user: {
+              connect: { id: ctx.session.user.id },
+            },
+          },
+        });
+        return newBlock;
+      }
+    }),
   deleteBlock: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
