@@ -6,6 +6,8 @@ import { api } from "~/utils/api";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
+import Image from "next/image";
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -57,6 +59,7 @@ export default function Blocks() {
               key={block.id}
               title={block.name}
               description={"Description"}
+              content={block.messages ? JSON.stringify(block.messages) : "[]"}
               id={block.id}
               refetch={blockQuery.refetch}
             />
@@ -71,9 +74,10 @@ interface BlockProps {
   title: string;
   description: string;
   id: string;
+  content: string;
   refetch: () => void;
 }
-function Block({ title, description, id, refetch }: BlockProps) {
+function Block({ title, description, id, refetch, content }: BlockProps) {
   const deleteBlockMutation = api.blocks.deleteBlock.useMutation({
     onSuccess: () => refetch(),
   });
@@ -141,7 +145,13 @@ function Block({ title, description, id, refetch }: BlockProps) {
           }`}
         >
           <div className="flex h-full flex-col">
-            <div className="aspect-square w-full rounded-lg bg-red-500"></div>
+            <div className="relative aspect-video w-full rounded-lg bg-red-500">
+              <Image
+                alt={title + " thumbnail"}
+                fill
+                src={`http://localhost:3000/api/blockOG?content=${content}`}
+              />
+            </div>
             <div className="flex justify-between p-2">
               {title && (
                 <Input
