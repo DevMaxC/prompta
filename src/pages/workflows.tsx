@@ -33,6 +33,13 @@ export default function Workflows() {
     const baseUrl = url.split("/")[0] + "//" + url.split("/")[2];
     return baseUrl;
   }
+
+  const deleteFlow = api.workflow.delete.useMutation({
+    onSuccess: () => {
+      allFlows.refetch();
+    },
+  });
+
   return (
     <main className="min-h-screen bg-slate-100">
       <div>
@@ -119,7 +126,12 @@ export default function Workflows() {
                   >
                     View
                   </Button>
-                  <Button variant={"destructive"}>Delete</Button>
+                  <Button
+                    onClick={() => deleteFlow.mutate({ id: flow.id })}
+                    variant={"destructive"}
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             </div>
@@ -137,8 +149,8 @@ function CodeBlock({ code }: BlockProps) {
   return (
     <div className="w-fit rounded-lg bg-slate-800 p-4">
       <pre className="text-sm text-slate-200">
-        {code.map((line) => (
-          <div>{line}</div>
+        {code.map((line, index) => (
+          <div key={index}>{line}</div>
         ))}
       </pre>
     </div>

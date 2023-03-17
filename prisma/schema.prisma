@@ -64,14 +64,14 @@ model Batch {
 model TestCompletion {
     id       String   @id @default(cuid())
     name     String
-    content  Json
+    content  Json   
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     success  Boolean
 
-    actual   String
-    expected String
+    actual   String  @db.VarChar(1000)
+    expected String @db.VarChar(1000)
 
     batchId  String
     batch    Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
