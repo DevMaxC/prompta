@@ -52,6 +52,7 @@ export default function Blocks() {
         >
           {blockQuery.data?.map((block) => (
             <Block
+              key={block.id}
               title={block.name}
               description={"Description"}
               id={block.id}
