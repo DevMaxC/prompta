@@ -1,6 +1,6 @@
 import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
-import { api } from "~/utils/api";
+import { api, getBaseUrl } from "~/utils/api";
 
 import { env } from "../env.mjs";
 
@@ -71,7 +71,9 @@ export default function Workflows() {
                         >
                           <CodeBlock
                             code={[
-                              `await fetch("https://prompta-one.vercel.app/api/workflows/${flow.id}", {`,
+                              `await fetch("${getBaseUrl()}/api/workflows/${
+                                flow.id
+                              }", {`,
                               `\tmethod: "POST",`,
                               `\theaders: {`,
                               `\t\t"Content-Type": "application/json",`,
@@ -90,7 +92,9 @@ export default function Workflows() {
                           <CodeBlock
                             code={[
                               `import requests`,
-                              `requests.post("https://prompta-one.vercel.app/api/workflows/${flow.id}", {`,
+                              `requests.post("${getBaseUrl()}/api/workflows/${
+                                flow.id
+                              }", {`,
                               `data: {`,
                               `"key": {YOUR_PROMPTA_API_KEY}`,
                               `}`,

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { api } from "~/utils/api";
+import { api, getBaseUrl } from "~/utils/api";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
@@ -149,7 +149,7 @@ function Block({ title, description, id, refetch, content }: BlockProps) {
               <Image
                 alt={title + " thumbnail"}
                 fill
-                src={`http://localhost:3000/api/blockOG?content=${content}`}
+                src={`${getBaseUrl()}/api/blockOG?content=${content}`}
               />
             </div>
             <div className="flex justify-between p-2">

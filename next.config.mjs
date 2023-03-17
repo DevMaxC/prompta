@@ -45,8 +45,6 @@ const config = {
       {
         protocol: "https",
         hostname: "prompta-one.vercel.app",
-        port: "",
-        pathname: "/api/**",
       },
     ],
   },
