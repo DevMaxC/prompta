@@ -26,6 +26,13 @@ export default function Workflows() {
 
   const router = useRouter();
 
+  function getMyUrl() {
+    // get the current url
+    const url = window.location.href;
+    // get the base url
+    const baseUrl = url.split("/")[0] + "//" + url.split("/")[2];
+    return baseUrl;
+  }
   return (
     <main className="min-h-screen bg-slate-100">
       <div>
@@ -71,7 +78,7 @@ export default function Workflows() {
                         >
                           <CodeBlock
                             code={[
-                              `await fetch("${getBaseUrl()}/api/workflows/${
+                              `await fetch("${getMyUrl()}/api/workflows/${
                                 flow.id
                               }", {`,
                               `\tmethod: "POST",`,
@@ -92,7 +99,7 @@ export default function Workflows() {
                           <CodeBlock
                             code={[
                               `import requests`,
-                              `requests.post("${getBaseUrl()}/api/workflows/${
+                              `requests.post("${getMyUrl()}/api/workflows/${
                                 flow.id
                               }", {`,
                               `data: {`,

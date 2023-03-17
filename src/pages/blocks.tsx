@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { api, getBaseUrl } from "~/utils/api";
+import { api } from "~/utils/api";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/context-menu";
 import { FocusEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { env } from "process";
 
 export default function Blocks() {
   const blockQuery = api.blocks.getAllBlocks.useQuery();
@@ -123,6 +124,14 @@ function Block({ title, description, id, refetch, content }: BlockProps) {
     }
   }, [isFocused]);
 
+  function getMyUrl() {
+    // get the current url
+    const url = window.location.href;
+    // get the base url
+    const baseUrl = url.split("/")[0] + "//" + url.split("/")[2];
+    return baseUrl;
+  }
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -149,7 +158,7 @@ function Block({ title, description, id, refetch, content }: BlockProps) {
               <Image
                 alt={title + " thumbnail"}
                 fill
-                src={`${getBaseUrl()}/api/blockOG?content=${content}`}
+                src={`${getMyUrl()}/api/blockOG?content=${content}`}
               />
             </div>
             <div className="flex justify-between p-2">
