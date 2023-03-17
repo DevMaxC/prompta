@@ -140,13 +140,6 @@ export const workflowRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-
-        select: {
-          id: true,
-          name: true,
-          flow: true,
-          userId: true,
-        },
       });
 
       if (!workflow) {

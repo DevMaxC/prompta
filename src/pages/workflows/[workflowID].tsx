@@ -25,6 +25,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Connect from "~/components/Connect";
 
 export default function WorkflowEditor() {
   const router = useRouter();
@@ -65,9 +66,10 @@ export default function WorkflowEditor() {
       <div className="flex h-full flex-col">
         <Nav />
         <div className="flex h-full flex-row">
-          <div className="flex h-full w-1/4 min-w-fit flex-col gap-2 border-r ">
-            <div className="p-2">
-              <Label>Blocks</Label>
+          <div className="flex h-full w-1/4 min-w-fit flex-col border-r ">
+            <div className="px-2 py-1">
+              <Label className="text-xs">Components</Label>
+              <Separator className="mt-2" />
             </div>
 
             <div className="flex flex-col">
@@ -91,7 +93,7 @@ export default function WorkflowEditor() {
             <div className="flex-none">
               <div className="flex items-center justify-between">
                 <h1>Main Content</h1>
-                <Button variant={"outline"}>Connect</Button>
+                {getWorkflow.data && <Connect flow={getWorkflow.data} />}
               </div>
             </div>
             <div className="min-h-0 grow-0 overflow-y-auto rounded-lg border ">
@@ -151,7 +153,12 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                 key={index}
                 className="group relative w-full rounded-lg bg-blue-500 p-2 text-white"
               >
-                <Label>{block.type}</Label>
+                <div className="flex items-center justify-between p-2">
+                  <div className="flex gap-2 ">
+                    <Label>{block.type}</Label>
+                  </div>
+                </div>
+
                 <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
               </div>
             );
@@ -181,7 +188,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                 key={index}
                 className="group relative w-full rounded-lg bg-purple-500 p-2 text-white"
               >
-                <Label>{block.type}</Label>
+                <div className="flex items-center justify-between p-2">
+                  <div className="flex gap-2 ">
+                    <Label>{block.type}</Label>
+                  </div>
+                </div>
                 <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
               </div>
             );
@@ -189,9 +200,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
             return (
               <div
                 key={index}
-                className="relative w-full rounded-lg bg-gray-800 p-2 text-white"
+                className="relative w-full rounded-lg bg-gray-800 text-white"
               >
-                <Label>{block.type}</Label>
+                <div className="flex items-center justify-between p-2">
+                  <Label>{block.type}</Label>
+                </div>
               </div>
             );
           default:
