@@ -17,6 +17,8 @@ import { useEffect, useRef, useState } from "react";
 import Batches from "~/components/Batches";
 import Units from "~/components/Units";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 export default function BlockDesign() {
   const router = useRouter();
   const ID = router.query.blockID as string;
@@ -97,9 +99,14 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
     }
   }
 
+  const [animationParent] = useAutoAnimate();
+
   return (
     <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border-2 border-black/30 p-4 md:col-span-2 ">
-      <div className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-scroll p-4">
+      <div
+        ref={animationParent}
+        className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-scroll p-4"
+      >
         {messages &&
           messages.map((message, index) => {
             if (message) {
