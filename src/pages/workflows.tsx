@@ -5,6 +5,17 @@ import { api, getBaseUrl } from "~/utils/api";
 
 import { useRouter } from "next/router";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "~/components/ui/use-toast";
+import { ToastAction } from "~/components/ui/toast";
+
 export default function Workflows() {
   const allFlows = api.workflow.getAll.useQuery();
   const router = useRouter();
@@ -39,24 +50,61 @@ export default function Workflows() {
         </div>
         <div className="mt-4 flex flex-col gap-2">
           {allFlows.data?.map((flow) => (
-            <div key={flow.id} className="rounded-lg border bg-white p-4">
+            <div
+              onDoubleClick={() => router.push(`/workflows/${flow.id}`)}
+              key={flow.id}
+              className=" rounded-lg border bg-white p-4 transition hover:ring-blue-500 hover:ring-opacity-50 hover:drop-shadow-md"
+            >
               <div className="flex justify-between">
                 <h2 className="text-lg font-semibold">{flow.name}</h2>
                 <div className="flex space-x-2">
                   <Connect flow={flow} />
 
-                  <Button
-                    onClick={() => router.push(`/workflows/${flow.id}`)}
-                    variant={"default"}
-                  >
-                    View
-                  </Button>
-                  <Button
-                    onClick={() => deleteFlow.mutate({ id: flow.id })}
-                    variant={"destructive"}
-                  >
-                    Delete
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button>More</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Workflow</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        onClick={() => router.push(`/workflows/${flow.id}`)}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled
+                        onClick={() => router.push(`/workflows/${flow.id}`)}
+                      >
+                        Usage
+                      </DropdownMenuItem>
+                      <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-red-500"
+                        onClick={() => {
+                          toast({
+                            title: "Confirm Deletion",
+                            description: "This action is irreversible.",
+                            variant: "destructive",
+                            action: (
+                              <ToastAction
+                                onClick={() =>
+                                  deleteFlow.mutate({ id: flow.id })
+                                }
+                                altText="Delete Workflow"
+                              >
+                                Delete Workflow
+                              </ToastAction>
+                            ),
+                          });
+                        }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>

@@ -3,10 +3,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import {
   flow,
   flowBlock,
+  flowComponent,
   flowFetch,
   flowRequest,
   flowResponse,
-  flowRun,
 } from "~/utils/types";
 
 // import the prisma client
@@ -17,6 +17,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    // Start
     const { workflowAPI } = req.query;
     if (workflowAPI === undefined) throw new Error("Workflow API not provided");
 
@@ -25,7 +26,7 @@ export default async function handler(
     const promptaKey = body.key as string;
     if (promptaKey === undefined) throw new Error("Key not provided");
 
-    const variables = body.variables;
+    const servervariables = body.variables;
 
     // find the workflow
     const workflow = await prisma.workflow.findUnique({
@@ -41,7 +42,10 @@ export default async function handler(
       },
     });
     if (workflow === null) throw new Error("Workflow not found");
-    if (!workflow.user.promptaKeys.map((key) => key.key).includes(promptaKey)) {
+    if (
+      !workflow.user.promptaKeys.map((key) => key.key).includes(promptaKey) &&
+      workflow.visible === "PRIVATE"
+    ) {
       throw new Error("Invalid key");
     }
 
@@ -58,35 +62,58 @@ export default async function handler(
 
     const flow = workflow.flow as flow;
 
-    let passOn = "";
+    // end
+
+    let variables: { [key: string]: any } = {};
+
     for (var i = 0; i < flow.blocks.length; i++) {
-      const block = flow.blocks[i] as
-        | flowBlock
-        | flowRun
-        | flowRequest
-        | flowResponse
-        | flowFetch;
+      const block = flow.blocks[i] as flowComponent;
       if (block.type === "request") {
         const requestBlock = block as flowRequest;
-        // const request = requestBlock.;
+        requestBlock.incomings.forEach((incoming) => {
+          // look for incoming variable and add it to the variables object
+          variables[incoming] = servervariables[incoming];
+        });
       }
 
       if (block.type === "response") {
-        res.status(200).json(passOn);
+        const responseBlock = block as flowResponse;
+        // returns an object with only the keys that are in the outgoings array
+        variables = responseBlock.outgoings.reduce(
+          (obj: { [key: string]: any }, key) => {
+            obj[key] = variables[key];
+            return obj;
+          },
+          {}
+        );
+        res.status(200).json({ variables: variables });
       }
 
       if (block.type === "fetch") {
         const fetchBlock = block as flowFetch;
-        await fetch(fetchBlock.url, {
-          body: JSON.stringify(fetchBlock.body),
+
+        const response = await fetch(fetchBlock.url, {
+          body: JSON.stringify(
+            fetchBlock.variablesToSerialize.reduce(
+              (obj: { [key: string]: any }, key) => {
+                obj[key] = servervariables[key];
+                return obj;
+              },
+              {}
+            )
+          ),
+        });
+
+        const json = await response.json();
+
+        // look for each outgoing variable and add it to the variables object/ overwrite it
+        fetchBlock.responseVariablesToSave.forEach((outgoing) => {
+          variables[outgoing] = json[outgoing];
         });
       }
 
-      if (block.type === "run") {
-        // run the code
-      }
-
       if (block.type === "block") {
+        const blockblock = block as flowBlock;
         // get the block
         const toRun = await prisma.block.findUnique({
           where: {
@@ -130,7 +157,14 @@ export default async function handler(
         if (!completion.data.choices[0])
           throw new Error("Completion did not generate");
 
-        passOn = completion.data.choices[0].message?.content || "";
+        console.log(
+          "Before setting variable:",
+          blockblock.outputVar,
+          variables
+        );
+        variables[blockblock.outputVar] =
+          completion.data.choices[0].message?.content || "";
+        console.log("After setting variable:", blockblock.outputVar, variables);
       }
     }
   } catch (error) {

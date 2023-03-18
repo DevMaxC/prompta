@@ -1,30 +1,50 @@
+export type flowComponent =
+  | flowBlock
+  | flowExtract
+  | flowFetch
+  | flowAssert
+  | flowRequest
+  | flowResponse;
+
 export type flow = {
   version: number;
-  blocks: (flowBlock | flowFetch | flowRun | flowRequest | flowResponse)[];
+  components: flowComponent[];
 };
 
 export type flowBlock = {
   type: "block";
   blockID: string;
+  requiredVariables: string[];
   outputVar: string;
 };
 
 export type flowFetch = {
   type: "fetch";
   url: string;
-  body: object;
+  variablesToSerialize: string[];
+  responseVariablesToSave: string[];
 };
 
-export type flowRun = {
-  type: "run";
-  contentToRun: string;
-  returnVariable: string;
+export type flowAssert = {
+  type: "assert";
+  outputVar: string;
+  outputValue: string;
+};
+
+export type flowExtract = {
+  type: "extract";
+  variable: string;
+  starter: string;
+  ender: string;
+  outputVar: string;
 };
 
 export type flowRequest = {
   type: "request";
+  incomings: string[];
 };
 
 export type flowResponse = {
   type: "response";
+  outgoings: string[];
 };
