@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Connect from "~/components/Connect";
+import Link from "next/link";
 
 export default function WorkflowEditor() {
   const router = useRouter();
@@ -143,6 +144,8 @@ interface WorkflowBlockDisplayProps {
 }
 
 const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
+  const myBlocks = api.blocks.getAllBlocks.useQuery();
+
   return (
     <div className="flex flex-col gap-4 p-4">
       {flow.blocks.map((block, index) => {
@@ -151,7 +154,16 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
             return (
               <div
                 key={index}
-                className="group relative w-full rounded-lg bg-blue-500 p-2 text-white"
+                className={`group relative w-full rounded-lg bg-blue-500 p-2 text-white ${
+                  myBlocks.data &&
+                  myBlocks.data
+                    .map((b) => {
+                      return b.id;
+                    })
+                    .includes(block.blockID)
+                    ? "ring-1 ring-green-500 ring-offset-1"
+                    : "ring-1 ring-red-500 ring-offset-1"
+                } `}
               >
                 <div className="flex items-center justify-between p-2">
                   <div className="flex gap-2 ">
@@ -200,7 +212,7 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
             return (
               <div
                 key={index}
-                className="relative w-full rounded-lg bg-gray-800 text-white"
+                className="relative w-full rounded-lg bg-gray-800 p-2 text-white"
               >
                 <div className="flex items-center justify-between p-2">
                   <Label>{block.type}</Label>
@@ -247,6 +259,15 @@ function AddBlockDialogue({ flow, setFlow, index }: AddBlockDialogueProps) {
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
+              {allBlocksQuery.isLoading && <div>Loading...</div>}
+              {allBlocksQuery.data?.length === 0 && (
+                <DropdownMenuItem>
+                  No blocks found. Create one{" "}
+                  <span className="ml-1 text-blue-500 transition hover:text-blue-400">
+                    <Link href={"/blocks"}>here!</Link>
+                  </span>
+                </DropdownMenuItem>
+              )}
               {allBlocksQuery.data &&
                 allBlocksQuery.data.map((block, index) => {
                   return (

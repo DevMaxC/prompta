@@ -58,6 +58,7 @@ const Home: NextPage = () => {
                     - Automatically rerun prompts if they don't format correctly
                   </li>
                   <li>- Log token usage</li>
+                  <li>- Low Latency Addition (max 8% on small requests decreasing relative to)</li>
                 </ul>
               </div>
             </div>

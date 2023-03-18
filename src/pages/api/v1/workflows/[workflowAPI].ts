@@ -22,42 +22,39 @@ export default async function handler(
 
     const body = JSON.parse(req.body);
 
-    const promptaKey = body.key;
+    const promptaKey = body.key as string;
+    if (promptaKey === undefined) throw new Error("Key not provided");
 
     const variables = body.variables;
-
-    // find the key owner
-    const keyOwner = await prisma.promptaKey.findUnique({
-      where: {
-        key: promptaKey,
-      },
-      include: {
-        user: true,
-      },
-    });
-
-    if (keyOwner === null) throw new Error("Invalid key");
-
-    if (keyOwner.user.openaiKey === null)
-      throw new Error("OpenAI key not found");
-    const configuration = new Configuration({
-      apiKey: keyOwner.user.openaiKey,
-    });
-
-    const openai = new OpenAIApi(configuration);
 
     // find the workflow
     const workflow = await prisma.workflow.findUnique({
       where: {
         id: workflowAPI as string,
       },
+      include: {
+        user: {
+          include: {
+            promptaKeys: true,
+          },
+        },
+      },
     });
+    if (workflow === null) throw new Error("Workflow not found");
+    if (!workflow.user.promptaKeys.map((key) => key.key).includes(promptaKey)) {
+      throw new Error("Invalid key");
+    }
+
+    if (workflow?.user.openaiKey === null)
+      throw new Error("OpenAI key not found");
+    const configuration = new Configuration({
+      apiKey: workflow.user.openaiKey,
+    });
+    const openai = new OpenAIApi(configuration);
 
     if (workflow === null) throw new Error("Workflow not found");
 
     // check if the workflow belongs to the key owner
-    if (workflow.userId !== keyOwner.user.id)
-      throw new Error("Workflow not found");
 
     const flow = workflow.flow as flow;
 
@@ -97,10 +94,8 @@ export default async function handler(
           },
         });
 
-        if (toRun === null) throw new Error("Block not found");
-
         // check if the block belongs to the key owner
-        if (toRun.userId !== keyOwner.user.id)
+        if (toRun === null || toRun.userId !== workflow.user.id)
           throw new Error("Block not found");
 
         const messages = toRun.messages as {
@@ -123,10 +118,14 @@ export default async function handler(
         }
 
         // run the block
+
+        const time = new Date().getTime();
         const completion = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           messages: messages,
         });
+        const time2 = new Date().getTime();
+        console.log(time2 - time);
 
         if (!completion.data.choices[0])
           throw new Error("Completion did not generate");
