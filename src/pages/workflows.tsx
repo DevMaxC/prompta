@@ -79,7 +79,13 @@ export default function Workflows() {
                       >
                         Usage
                       </DropdownMenuItem>
-                      <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          router.push(`/workflows/${flow.id}/settings`);
+                        }}
+                      >
+                        Settings
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-red-500"

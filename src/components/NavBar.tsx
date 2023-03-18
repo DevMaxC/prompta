@@ -45,7 +45,7 @@ export function Nav() {
           <div className="flex items-center gap-4">
             <Link href="/workflows">Workflows</Link>
             <Link href="/blocks">Blocks</Link>
-            <Link href="/playground">Playground</Link>
+            <h1 className="cursor-not-allowed">Playground</h1>
             <DropdownMenu>
               <DropdownMenuTrigger className="rounded-full p-0.5">
                 <Avatar>
@@ -59,9 +59,9 @@ export function Nav() {
                 <DropdownMenuItem>
                   <Link href={"/settings"}>Settings</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Account</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
+                <DropdownMenuItem disabled>Account</DropdownMenuItem>
+                <DropdownMenuItem disabled>Billing</DropdownMenuItem>
+                <DropdownMenuItem disabled>Subscription</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
                   Sign Out
