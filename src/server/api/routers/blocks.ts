@@ -17,6 +17,7 @@ export const blocksRouter = createTRPCRouter({
     return blocks?.blocks;
   }),
 
+
   copyBlock: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -120,6 +121,8 @@ export const blocksRouter = createTRPCRouter({
           messages: input.data,
         },
       });
+
+
       return block;
     }),
 

@@ -34,9 +34,7 @@ export default function Connect({ flow }: ConnectProps) {
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant={"outline"}>Connect</Button>
-      </DialogTrigger>
+      <DialogTrigger>Connect</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Connection</DialogTitle>
@@ -94,7 +92,7 @@ export default function Connect({ flow }: ConnectProps) {
 interface BlockProps {
   code: string[];
 }
-function CodeBlock({ code }: BlockProps) {
+export function CodeBlock({ code }: BlockProps) {
   return (
     <div className="w-fit rounded-lg bg-slate-800 p-4">
       <pre className="text-sm text-slate-200">

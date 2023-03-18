@@ -78,9 +78,22 @@ model TestCompletion {
 
 }
 
+enum Visible {
+    PUBLIC
+    PRIVATE
+}
+
+enum Payer {
+    TOKENHOLDER
+    PERSONALLY
+}
+
 model Workflow {
     id       String   @id @default(cuid())
     name     String
+    visible   Visible @default(PRIVATE)
+    payer   Payer @default(PERSONALLY)
+    markup  Int @default(0)
 
     flow   Json
 
