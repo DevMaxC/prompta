@@ -11,6 +11,7 @@ const fontSans = FontSans({
 
 import { api } from "~/utils/api";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react";
 
 import "~/styles/globals.css";
 
@@ -26,6 +27,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 				}
 			}`}</style>
       <Component {...pageProps} />
+      <Analytics />
       <Toaster />
     </SessionProvider>
   );
