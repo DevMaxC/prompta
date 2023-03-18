@@ -3,11 +3,19 @@ import { signIn } from "next-auth/react";
 import { Nav } from "~/components/NavBar";
 import { Button } from "~/components/ui/button";
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
   return (
     <main className="min-h-screen bg-slate-100">
+      <Head>
+        <title>Prompta</title>
+        <meta
+          name="description"
+          content="Create and test AI prompts, then deploy them serverlessly."
+        />
+      </Head>
       <div>
         <Nav />
       </div>
@@ -58,7 +66,10 @@ const Home: NextPage = () => {
                     - Automatically rerun prompts if they don't format correctly
                   </li>
                   <li>- Log token usage</li>
-                  <li>- Low Latency Addition (max 8% on small requests decreasing relative to)</li>
+                  <li>
+                    - Low Latency Addition (max 8% on small requests decreasing
+                    relative to)
+                  </li>
                 </ul>
               </div>
             </div>
