@@ -121,7 +121,6 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
   return (
     <div className="flex flex-col gap-4 p-4">
       {flow.components.map((component, index) => {
-        console.log(component);
         switch (component.type) {
           case "block":
             return (
@@ -189,7 +188,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     />
                   </div>
                 </div>
-                <AddComponentDialogue flow={flow} setFlow={setFlow} index={index} />
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "fetch":
@@ -199,7 +202,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                 className="group relative w-full rounded-lg bg-purple-500 p-2 text-white"
               >
                 <Label>{component.type}</Label>
-                <AddComponentDialogue flow={flow} setFlow={setFlow} index={index} />
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "request":
@@ -301,7 +308,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     })}
                   </div>
                 </div>
-                <AddComponentDialogue flow={flow} setFlow={setFlow} index={index} />
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "response":
@@ -402,7 +413,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     })}
                   </div>
                 </div>
-                <AddComponentDialogue flow={flow} setFlow={setFlow} index={index} />
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "assert":
@@ -449,14 +464,14 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                       onChange={(e) => {
                         setFlow({
                           ...flow,
-                          components: flow.components.map((block, i) => {
+                          components: flow.components.map((component, i) => {
                             if (i === index) {
                               return {
-                                ...block,
+                                ...component,
                                 outputValue: e.target.value,
                               };
                             } else {
-                              return block;
+                              return component;
                             }
                           }),
                         });
@@ -464,12 +479,16 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     />
                   </div>
                 </div>
-                <AddComponentDialogue flow={flow} setFlow={setFlow} index={index} />
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
 
           default:
-            return <div>Unknown block type</div>;
+            return <div>Unknown component type</div>;
         }
       })}
     </div>
@@ -496,6 +515,23 @@ function AddComponentDialogue({
     const newFlow = { ...flow, components: newcomponents };
     setFlow(newFlow);
     console.log(newFlow);
+  }
+
+  function detectRequiredVariables(
+    messages: { role: "user" | "assistant" | "system"; content: string }[]
+  ) {
+    console.log(messages);
+    const requiredVariables: string[] = [];
+    //search for {variable} in messages
+    messages.forEach((message) => {
+      const regex = /{([^}]+)}/g;
+      let match;
+      while ((match = regex.exec(message.content))) {
+        requiredVariables.push(match[1] as string);
+      }
+    });
+    console.log(requiredVariables);
+    return requiredVariables;
   }
 
   return (
@@ -530,7 +566,12 @@ function AddComponentDialogue({
                           type: "block",
                           blockID: component.id,
                           outputVar: "output",
-                          requiredVariables: [],
+                          requiredVariables: detectRequiredVariables(
+                            component.messages as {
+                              role: "user" | "assistant" | "system";
+                              content: string;
+                            }[]
+                          ),
                         })
                       }
                     >

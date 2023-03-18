@@ -17,32 +17,6 @@ export const blocksRouter = createTRPCRouter({
     return blocks?.blocks;
   }),
 
-  // updateRequiredVariables: protectedProcedure
-
-  //   .input(
-  //     z.object({
-  //       id: z.string(),
-  //       requiredVariables: z.array(z.string()),
-  //     })
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     //check if user owns block
-  //     const user = await ctx.prisma.user.findUnique({
-  //       where: { id: ctx.session.user.id },
-  //       select: { blocks: { select: { id: true } } },
-  //     });
-  //     if (!user?.blocks.some((block) => block.id === input.id)) {
-  //       throw new TRPCError({ code: "UNAUTHORIZED" });
-  //     } else {
-  //       const block = await ctx.prisma.block.update({
-  //         where: { id: input.id },
-  //         data: {
-  //           : input.requiredVariables,
-  //         },
-  //       });
-  //       return block;
-  //     }
-  //   }),
 
   copyBlock: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -147,6 +121,8 @@ export const blocksRouter = createTRPCRouter({
           messages: input.data,
         },
       });
+
+
       return block;
     }),
 
