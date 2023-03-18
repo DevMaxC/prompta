@@ -16,6 +16,8 @@ import React from "react";
 import { Button } from "./ui/button";
 import { flow } from "~/utils/types";
 import { Workflow } from "@prisma/client";
+import { Label } from "./ui/label";
+import Link from "next/link.js";
 
 interface ConnectProps {
   flow: Workflow;
@@ -84,6 +86,15 @@ export default function Connect({ flow }: ConnectProps) {
             />
           </TabsContent>
         </Tabs>
+        <Label className="text-gray-800">
+          Get Prompta API Key{" "}
+          <Link
+            className="text-blue-500 transition hover:text-blue-400"
+            href={"/settings"}
+          >
+            Here
+          </Link>
+        </Label>
       </DialogContent>
     </Dialog>
   );
