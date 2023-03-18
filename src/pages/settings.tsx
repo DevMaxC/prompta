@@ -42,25 +42,28 @@ export default function settings() {
           <Label htmlFor="key">Open AI Key</Label>
           <div className="relative">
             {user.data && (
-              <Input
-                defaultValue={user.data.openaiKey || ""}
-                onInput={(e) => {
-                  keyMut.mutate({ key: e.currentTarget.value });
-                }}
-                id="key"
-                placeholder="sk-hf48*****dbkg"
-                type={showKey ? "text" : "password"}
-              />
+              <div>
+                <Input
+                  defaultValue={user.data.openaiKey || ""}
+                  onInput={(e) => {
+                    keyMut.mutate({ key: e.currentTarget.value });
+                  }}
+                  id="key"
+                  placeholder="sk-hf48*****dbkg"
+                  type={showKey ? "text" : "password"}
+                />
+
+                <Toggle
+                  className="absolute right-0 top-0 hover:bg-transparent"
+                  pressed={showKey}
+                  onPressedChange={() => {
+                    setShowKey(!showKey);
+                  }}
+                >
+                  Show
+                </Toggle>
+              </div>
             )}
-            <Toggle
-              className="absolute right-0 top-0 hover:bg-transparent"
-              pressed={showKey}
-              onPressedChange={() => {
-                setShowKey(!showKey);
-              }}
-            >
-              Show
-            </Toggle>
           </div>
         </div>
         <div className="flex flex-col gap-2 rounded-lg border bg-white p-4">
