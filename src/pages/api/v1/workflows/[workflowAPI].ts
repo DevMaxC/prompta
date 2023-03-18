@@ -2,6 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   flow,
+  flowAssert,
   flowBlock,
   flowComponent,
   flowFetch,
@@ -110,6 +111,12 @@ export default async function handler(
         fetchBlock.responseVariablesToSave.forEach((outgoing) => {
           variables[outgoing] = json[outgoing];
         });
+      }
+
+      if (block.type === "assert") {
+        const fetchBlock = block as flowAssert;
+
+        variables[fetchBlock.outputVar] = fetchBlock.outputValue;
       }
 
       if (block.type === "block") {
