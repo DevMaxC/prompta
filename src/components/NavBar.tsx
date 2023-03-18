@@ -4,11 +4,12 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import Image from "next/image";
-import { User } from "lucide-react";
 
 import { Separator } from "@/components/ui/seperator";
 
 import { useState } from "react";
+import { SiDiscord } from "@icons-pack/react-simple-icons";
+import { LogOut, Settings, User, CreditCard } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,9 +32,11 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { Button } from "./ui/button";
+import { useRouter } from "next/router";
 
 export function Nav() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <nav className="flex w-full items-center justify-between border-b border-black/10 p-4">
@@ -56,14 +59,36 @@ export function Nav() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem className="flex gap-2">
+                  <Settings size={16} />
                   <Link href={"/settings"}>Settings</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem disabled>Account</DropdownMenuItem>
-                <DropdownMenuItem disabled>Billing</DropdownMenuItem>
-                <DropdownMenuItem disabled>Subscription</DropdownMenuItem>
+                <DropdownMenuItem disabled className="flex gap-2">
+                  <User size={16} />
+                  Account
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="flex gap-2">
+                  <CreditCard size={16} />
+                  Billing
+                </DropdownMenuItem>
+                {/* <DropdownMenuItem disabled>Subscription</DropdownMenuItem> */}
+
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push("https://discord.gg/R4q5zf7nDR");
+                  }}
+                  className="flex gap-2"
+                >
+                  <SiDiscord size={16} />
+                  <h1>Join Discord</h1>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="flex gap-2"
+                  onClick={() => signOut()}
+                >
+                  <LogOut size={16} />
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
