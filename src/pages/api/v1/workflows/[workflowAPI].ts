@@ -66,8 +66,8 @@ export default async function handler(
 
     let variables: { [key: string]: any } = {};
 
-    for (var i = 0; i < flow.blocks.length; i++) {
-      const block = flow.blocks[i] as flowComponent;
+    for (var i = 0; i < flow.components.length; i++) {
+      const block = flow.components[i] as flowComponent;
       if (block.type === "request") {
         const requestBlock = block as flowRequest;
         requestBlock.incomings.forEach((incoming) => {
