@@ -8,11 +8,13 @@ import { api } from "~/utils/api";
 import {
   flow,
   flowBlock,
+  flowComponent,
   flowFetch,
   flowRequest,
   flowResponse,
-  flowRun,
 } from "~/utils/types";
+import { Plus, PlusIcon, XIcon } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Connect from "~/components/Connect";
 import Link from "next/link";
+import { Input } from "~/components/ui/input";
 
 export default function WorkflowEditor() {
   const router = useRouter();
@@ -75,14 +78,14 @@ export default function WorkflowEditor() {
 
             <div className="flex flex-col">
               {flow &&
-                flow.blocks.map((block, index) => {
+                flow.components.map((component, index) => {
                   return (
                     <div key={index}>
                       <Button
                         variant={"outline"}
                         className="inset w-full justify-start rounded-none border-none text-left text-xs outline-0 -outline-offset-1 outline-blue-500 ring-offset-transparent hover:outline hover:outline-1 focus:ring-0 active:scale-100"
                       >
-                        {block.type}
+                        {component.type}
                       </Button>
                     </div>
                   );
@@ -107,37 +110,6 @@ export default function WorkflowEditor() {
   );
 }
 
-// export type flow = {
-//   version: number;
-//   blocks: (flowBlock | flowFetch | flowRun | flowRequest | flowResponse)[];
-// };
-
-// export type flowBlock = {
-//   type: "block";
-//   blockID: string;
-//   outputVar: string;
-// };
-
-// export type flowFetch = {
-//   type: "fetch";
-//   url: string;
-//   body: object;
-// };
-
-// export type flowRun = {
-//   type: "run";
-//   contentToRun: string;
-//   returnVariable: string;
-// };
-
-// export type flowRequest = {
-//   type: "request";
-// };
-
-// export type flowResponse = {
-//   type: "response";
-// };
-
 interface WorkflowBlockDisplayProps {
   flow: flow;
   setFlow: React.Dispatch<React.SetStateAction<flow | undefined>>;
@@ -148,30 +120,79 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      {flow.blocks.map((block, index) => {
-        switch (block.type) {
+      {flow.components.map((component, index) => {
+        switch (component.type) {
           case "block":
             return (
               <div
                 key={index}
-                className={`group relative w-full rounded-lg bg-blue-500 p-2 text-white ${
-                  myBlocks.data &&
-                  myBlocks.data
-                    .map((b) => {
-                      return b.id;
-                    })
-                    .includes(block.blockID)
-                    ? "ring-1 ring-green-500 ring-offset-1"
-                    : "ring-1 ring-red-500 ring-offset-1"
-                } `}
+                className="group relative w-full rounded-lg bg-blue-500 p-2 text-white"
               >
-                <div className="flex items-center justify-between p-2">
-                  <div className="flex gap-2 ">
-                    <Label>{block.type}</Label>
+                <div className="mb-2 flex items-center justify-between p-2">
+                  <div className="flex w-full justify-between gap-2 ">
+                    <Label className="font-semibold capitalize">
+                      {component.type}
+                    </Label>
+                    {myBlocks.data
+                      ?.map((block, index) => {
+                        return block.id;
+                      })
+                      .includes(component.blockID) && (
+                      <Link href={`/blocks/${component.blockID}`}>
+                        <Label className="hover:cursor-pointer">
+                          Visit Block
+                        </Label>
+                      </Link>
+                    )}
                   </div>
                 </div>
-
-                <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
+                {myBlocks.data && component.requiredVariables.length > 0 && (
+                  <div className="mb-4 flex flex-col gap-2 rounded-lg bg-white p-2">
+                    <Label className="text-blue-500">Required Variables</Label>
+                    <div className="flex w-full gap-2">
+                      {component.requiredVariables.map((variable, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center justify-center gap-2 rounded-lg bg-blue-500 p-2 text-white"
+                          >
+                            <Label>{variable}</Label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
+                  <Label className="text-blue-500">Output Variable</Label>
+                  <div className="flex w-full gap-2">
+                    <input
+                      type="text"
+                      className="text-blue-500"
+                      defaultValue={component.outputVar}
+                      onChange={(e) => {
+                        setFlow({
+                          ...flow,
+                          components: flow.components.map((component, i) => {
+                            if (i === index) {
+                              return {
+                                ...component,
+                                outputVar: e.target.value,
+                              };
+                            } else {
+                              return component;
+                            }
+                          }),
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "fetch":
@@ -180,18 +201,12 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                 key={index}
                 className="group relative w-full rounded-lg bg-purple-500 p-2 text-white"
               >
-                <Label>{block.type}</Label>
-                <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
-              </div>
-            );
-          case "run":
-            return (
-              <div
-                key={index}
-                className="group relative w-full rounded-lg bg-purple-500 p-2 text-white"
-              >
-                <Label>{block.type}</Label>
-                <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
+                <Label>{component.type}</Label>
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "request":
@@ -200,52 +215,325 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                 key={index}
                 className="group relative w-full rounded-lg bg-purple-500 p-2 text-white"
               >
-                <div className="flex items-center justify-between p-2">
+                <div className="mb-2 flex items-center justify-between p-2">
                   <div className="flex gap-2 ">
-                    <Label>{block.type}</Label>
+                    <Label className="font-semibold capitalize">
+                      {component.type}
+                    </Label>
                   </div>
                 </div>
-                <AddBlockDialogue flow={flow} setFlow={setFlow} index={index} />
+                <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
+                  <Label className="text-purple-500">
+                    Expected Incoming Variables
+                  </Label>
+                  <div className="flex w-full gap-2">
+                    <button
+                      onClick={() => {
+                        setFlow({
+                          ...flow,
+                          components: [
+                            ...flow.components.slice(0, index),
+                            {
+                              ...component,
+                              incomings: [...component.incomings, ""],
+                            },
+                            ...flow.components.slice(index + 1),
+                          ],
+                        });
+                      }}
+                      className="rounded-full bg-purple-500 p-1 text-white transition hover:bg-purple-400"
+                    >
+                      <PlusIcon size={16} />
+                    </button>
+                    {component.incomings.map((variable, indexi) => {
+                      return (
+                        <div
+                          key={indexi}
+                          className="flex items-center justify-between rounded-full bg-gray-200 p-1"
+                        >
+                          <input
+                            type="text"
+                            className="ml-2 bg-transparent text-xs text-black outline-none"
+                            defaultValue={variable}
+                            onChange={(e) => {
+                              setFlow({
+                                ...flow,
+                                components: flow.components.map(
+                                  (component, i) => {
+                                    if (i === index) {
+                                      component = component as flowRequest;
+                                      return {
+                                        ...component,
+                                        incomings: component.incomings.map(
+                                          (incoming, ii) => {
+                                            if (ii === indexi) {
+                                              return e.target.value;
+                                            } else {
+                                              return incoming;
+                                            }
+                                          }
+                                        ),
+                                      };
+                                    } else {
+                                      return component;
+                                    }
+                                  }
+                                ),
+                              });
+                            }}
+                          />
+                          <button
+                            onClick={() => {
+                              setFlow({
+                                ...flow,
+                                components: [
+                                  ...flow.components.slice(0, index),
+                                  {
+                                    ...component,
+                                    incomings: [
+                                      ...component.incomings.slice(0, indexi),
+                                      ...component.incomings.slice(indexi + 1),
+                                    ],
+                                  },
+                                  ...flow.components.slice(index + 1),
+                                ],
+                              });
+                            }}
+                            className="rounded-full bg-red-500 p-1 text-white transition hover:bg-red-400"
+                          >
+                            <XIcon size={10} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
           case "response":
             return (
               <div
                 key={index}
-                className="relative w-full rounded-lg bg-gray-800 p-2 text-white"
+                className="group relative w-full rounded-lg bg-gray-500 p-2 text-white"
               >
-                <div className="flex items-center justify-between p-2">
-                  <Label>{block.type}</Label>
+                <div className="mb-2 flex items-center justify-between p-2">
+                  <div className="flex gap-2 ">
+                    <Label className="font-semibold capitalize">
+                      {component.type}
+                    </Label>
+                  </div>
                 </div>
+                <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
+                  <Label className="text-gray-500">Outgoing Variables</Label>
+                  <div className="flex w-full gap-2">
+                    <button
+                      onClick={() => {
+                        setFlow({
+                          ...flow,
+                          components: [
+                            ...flow.components.slice(0, index),
+                            {
+                              ...component,
+                              outgoings: [...component.outgoings, ""],
+                            },
+                            ...flow.components.slice(index + 1),
+                          ],
+                        });
+                      }}
+                      className="rounded-full bg-gray-500 p-1 text-white transition hover:bg-purple-400"
+                    >
+                      <PlusIcon size={16} />
+                    </button>
+                    {component.outgoings.map((variable, indexi) => {
+                      return (
+                        <div
+                          key={indexi}
+                          className="flex items-center justify-between rounded-full bg-gray-200 p-1"
+                        >
+                          <input
+                            type="text"
+                            className="ml-2 bg-transparent text-xs text-black outline-none"
+                            defaultValue={variable}
+                            onChange={(e) => {
+                              setFlow({
+                                ...flow,
+                                components: flow.components.map(
+                                  (component, i) => {
+                                    if (i === index) {
+                                      component = component as flowResponse;
+                                      return {
+                                        ...component,
+                                        outgoings: component.outgoings.map(
+                                          (outgoing, ii) => {
+                                            if (ii === indexi) {
+                                              return e.target.value;
+                                            } else {
+                                              return outgoing;
+                                            }
+                                          }
+                                        ),
+                                      };
+                                    } else {
+                                      return component;
+                                    }
+                                  }
+                                ),
+                              });
+                            }}
+                          />
+
+                          <button
+                            onClick={() => {
+                              setFlow({
+                                ...flow,
+                                components: [
+                                  ...flow.components.slice(0, index),
+                                  {
+                                    ...component,
+                                    outgoings: [
+                                      ...component.outgoings.slice(0, indexi),
+                                      ...component.outgoings.slice(indexi + 1),
+                                    ],
+                                  },
+                                  ...flow.components.slice(index + 1),
+                                ],
+                              });
+                            }}
+                            className="rounded-full bg-red-500 p-1 text-white transition hover:bg-red-400"
+                          >
+                            <XIcon size={10} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
               </div>
             );
+          case "assert":
+            return (
+              <div
+                key={index}
+                className="group relative w-full rounded-lg bg-green-500 p-2 text-white"
+              >
+                <div className="mb-2 flex items-center justify-between p-2">
+                  <div className="flex w-full justify-between gap-2 ">
+                    <Label className="font-semibold capitalize">
+                      {component.type}
+                    </Label>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 rounded-lg bg-white p-2">
+                  <Label className="text-green-500">Output Variable</Label>
+                  <div className="flex w-full gap-2">
+                    <input
+                      type="text"
+                      className="text-green-500"
+                      defaultValue={component.outputVar}
+                      onChange={(e) => {
+                        setFlow({
+                          ...flow,
+                          components: flow.components.map((component, i) => {
+                            if (i === index) {
+                              return {
+                                ...component,
+                                outputVar: e.target.value,
+                              };
+                            } else {
+                              return component;
+                            }
+                          }),
+                        });
+                      }}
+                    />
+                    <h1 className="text-green-500">=</h1>
+                    <input
+                      type="text"
+                      className="text-green-500"
+                      defaultValue={component.outputValue}
+                      onChange={(e) => {
+                        setFlow({
+                          ...flow,
+                          components: flow.components.map((component, i) => {
+                            if (i === index) {
+                              return {
+                                ...component,
+                                outputValue: e.target.value,
+                              };
+                            } else {
+                              return component;
+                            }
+                          }),
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+                <AddComponentDialogue
+                  flow={flow}
+                  setFlow={setFlow}
+                  index={index}
+                />
+              </div>
+            );
+
           default:
-            return <div>Unknown block type</div>;
+            return <div>Unknown component type</div>;
         }
       })}
     </div>
   );
 };
 
-interface AddBlockDialogueProps {
+interface AddComponentDialogueProps {
   flow: flow;
   setFlow: React.Dispatch<React.SetStateAction<flow | undefined>>;
   index: number;
 }
 
-function AddBlockDialogue({ flow, setFlow, index }: AddBlockDialogueProps) {
-  const allBlocksQuery = api.blocks.getAllBlocks.useQuery();
+function AddComponentDialogue({
+  flow,
+  setFlow,
+  index,
+}: AddComponentDialogueProps) {
+  const allComponentsQuery = api.blocks.getAllBlocks.useQuery();
 
-  function addBlock(
-    flowComponent: flowBlock | flowFetch | flowRequest | flowResponse | flowRun
-  ) {
-    console.log("adding block");
-    const newBlocks = [...flow.blocks];
-    newBlocks.splice(index + 1, 0, flowComponent);
-    const newFlow = { ...flow, blocks: newBlocks };
+  function addComponent(flowComponent: flowComponent) {
+    console.log("adding component");
+    const newcomponents = [...flow.components];
+    newcomponents.splice(index + 1, 0, flowComponent);
+    const newFlow = { ...flow, components: newcomponents };
     setFlow(newFlow);
     console.log(newFlow);
   }
+
+  function detectRequiredVariables(
+    messages: { role: "user" | "assistant" | "system"; content: string }[]
+  ) {
+    console.log(messages);
+    const requiredVariables: string[] = [];
+    //search for {variable} in messages
+    messages.forEach((message) => {
+      const regex = /{([^}]+)}/g;
+      let match;
+      while ((match = regex.exec(message.content))) {
+        requiredVariables.push(match[1] as string);
+      }
+    });
+    console.log(requiredVariables);
+    return requiredVariables;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="absolute bottom-0 left-1/2 translate-y-1/2 rounded-full border bg-white p-2 opacity-0 drop-shadow-md transition-all group-hover:opacity-100 peer-focus:opacity-100"></DropdownMenuTrigger>
@@ -259,8 +547,8 @@ function AddBlockDialogue({ flow, setFlow, index }: AddBlockDialogueProps) {
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              {allBlocksQuery.isLoading && <div>Loading...</div>}
-              {allBlocksQuery.data?.length === 0 && (
+              {allComponentsQuery.isLoading && <div>Loading...</div>}
+              {allComponentsQuery.data?.length === 0 && (
                 <DropdownMenuItem>
                   No blocks found. Create one{" "}
                   <span className="ml-1 text-blue-500 transition hover:text-blue-400">
@@ -268,20 +556,26 @@ function AddBlockDialogue({ flow, setFlow, index }: AddBlockDialogueProps) {
                   </span>
                 </DropdownMenuItem>
               )}
-              {allBlocksQuery.data &&
-                allBlocksQuery.data.map((block, index) => {
+              {allComponentsQuery.data &&
+                allComponentsQuery.data.map((component, index) => {
                   return (
                     <DropdownMenuItem
                       key={index}
                       onClick={() =>
-                        addBlock({
+                        addComponent({
                           type: "block",
-                          blockID: block.id,
+                          blockID: component.id,
                           outputVar: "output",
+                          requiredVariables: detectRequiredVariables(
+                            component.messages as {
+                              role: "user" | "assistant" | "system";
+                              content: string;
+                            }[]
+                          ),
                         })
                       }
                     >
-                      <span>{block.name}</span>
+                      <span>{component.name}</span>
                     </DropdownMenuItem>
                   );
                 })}
@@ -289,7 +583,17 @@ function AddBlockDialogue({ flow, setFlow, index }: AddBlockDialogueProps) {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuItem disabled>Run (coming soon)</DropdownMenuItem>
-        <DropdownMenuItem disabled>Fetch (coming soon)</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() =>
+            addComponent({
+              type: "assert",
+              outputVar: "output",
+              outputValue: "value",
+            })
+          }
+        >
+          Assert
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

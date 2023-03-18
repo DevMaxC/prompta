@@ -80,6 +80,7 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
     inputmessages as Message[]
   );
   const updateMessage = api.blocks.updateMessage.useMutation();
+  // const updateRequiredVariables = api.blocks.updateRequiredVariables.useMutation();
 
   const [count, setCount] = useState(0);
   useEffect(() => {
