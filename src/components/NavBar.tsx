@@ -59,9 +59,12 @@ export function Nav() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2">
+                <DropdownMenuItem
+                  onClick={() => router.push("/settings")}
+                  className="flex gap-2"
+                >
                   <Settings size={16} />
-                  <Link href={"/settings"}>Settings</Link>
+                  Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled className="flex gap-2">
                   <User size={16} />
