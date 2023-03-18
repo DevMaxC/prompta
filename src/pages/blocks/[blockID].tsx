@@ -104,7 +104,7 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
   const [animationParent] = useAutoAnimate();
 
   return (
-    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border bg-white  p-4 md:col-span-2 ">
+    <div className="col-span-1 flex aspect-video w-full flex-col justify-between gap-2 rounded-lg border bg-white  p-4 md:col-span-2 ">
       <div
         ref={animationParent}
         className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-auto p-4"
