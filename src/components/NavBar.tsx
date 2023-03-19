@@ -70,7 +70,10 @@ export function Nav() {
                   <User size={16} />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem disabled className="flex gap-2">
+                <DropdownMenuItem
+                  onClick={() => router.push("/billing")}
+                  className="flex gap-2"
+                >
                   <CreditCard size={16} />
                   Billing
                 </DropdownMenuItem>
