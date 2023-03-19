@@ -20,6 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+
 import {
   ForwardRefExoticComponent,
   RefAttributes,
@@ -29,6 +32,8 @@ import {
 } from "react";
 import { api } from "~/utils/api";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ToastAction } from "./ui/toast";
+import Link from "next/link";
 
 interface UnitProps {
   id: string;
@@ -46,6 +51,8 @@ export default function Units({ id, refetch }: UnitProps) {
       unitsQuery.refetch();
     },
   });
+
+  const user = api.user.getUser.useQuery();
 
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -67,10 +74,27 @@ export default function Units({ id, refetch }: UnitProps) {
   });
 
   const collapsibleRef = useRef<HTMLButtonElement>(null);
+
+  const { toast } = useToast();
+
   function runTest() {
-    startBatch.mutate({
-      blockId: id,
-    });
+    if (user.data?.openaiKey == null || user.data?.openaiKey == "") {
+      toast({
+        title: "OpenAI Key not set!",
+        variant: "destructive",
+        description: "Set your key in Settings to run tests on your blocks",
+        action: (
+          <ToastAction altText="Visit Settings">
+            <Link href="/settings">Visit Settings</Link>
+          </ToastAction>
+        ),
+      });
+      return;
+    } else {
+      startBatch.mutate({
+        blockId: id,
+      });
+    }
   }
 
   return (
