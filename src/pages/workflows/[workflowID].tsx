@@ -151,7 +151,7 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
   const myBlocks = api.blocks.getAllBlocks.useQuery();
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-6 p-4">
       {flow.components.map((component, index) => {
         switch (component.type) {
           case "block":
@@ -420,7 +420,7 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                           ],
                         });
                       }}
-                      className="rounded-full bg-gray-500 p-1 text-white transition hover:bg-purple-400"
+                      className="rounded-full bg-gray-500 p-1 text-white transition hover:bg-gray-400"
                     >
                       <PlusIcon size={16} />
                     </button>
@@ -488,11 +488,6 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     })}
                   </div>
                 </div>
-                <AddComponentDialogue
-                  flow={flow}
-                  setFlow={setFlow}
-                  index={index}
-                />
               </div>
             );
           case "assert":
@@ -594,7 +589,9 @@ function AddComponentDialogue({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="absolute bottom-0 left-1/2 translate-y-1/2 rounded-full border bg-white p-2 opacity-0 drop-shadow-md transition-all group-hover:opacity-100 peer-focus:opacity-100"></DropdownMenuTrigger>
+      <DropdownMenuTrigger className="absolute bottom-0 left-1/2 translate-y-3/4 rounded-full border bg-white/90 p-2 opacity-0 drop-shadow-md transition-all group-hover:opacity-100 peer-focus:opacity-100">
+        <PlusIcon className="text-black" size={16} />
+      </DropdownMenuTrigger>
       <DropdownMenuContent className="peer">
         <DropdownMenuLabel>Add Component</DropdownMenuLabel>
         <DropdownMenuSeparator />
