@@ -70,7 +70,7 @@ export default function Workflows() {
                       <DropdownMenuSeparator />
 
                       <DropdownMenuItem asChild>
-                        <Link href={`/workflows/${flow.id}/edit`}>Edit</Link>
+                        <Link href={`/workflows/${flow.id}`}>Edit</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem disabled asChild>
                         <Link href={`/workflows/${flow.id}/usage`}>Usage</Link>

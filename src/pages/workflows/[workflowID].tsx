@@ -530,6 +530,20 @@ function AddComponentDialogue({
         requiredVariables.push(match[1] as string);
       }
     });
+
+    // In new version, variable cannot have spaces in them, if there is a space, it is not variable and the user is just trying to type
+    // messages.forEach((message) => {
+    //   const regex = /{([^}]+)}/g;
+    //   let match;
+    //   while ((match = regex.exec(message.content))) {
+    //     if (match[1].includes(" ")) {
+    //       //do nothing
+    //     } else {
+    //       requiredVariables.push(match[1] as string);
+    //     }
+    //   }
+    // });
+
     console.log(requiredVariables);
     return requiredVariables;
   }
