@@ -80,7 +80,6 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
     inputmessages as Message[]
   );
   const updateMessage = api.blocks.updateMessage.useMutation();
-  // const updateRequiredVariables = api.blocks.updateRequiredVariables.useMutation();
 
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -104,7 +103,7 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
   const [animationParent] = useAutoAnimate();
 
   return (
-    <div className="col-span-1 flex aspect-video w-full flex-col justify-between gap-2 rounded-lg border bg-white  p-4 md:col-span-2 ">
+    <div className="col-span-1 flex aspect-video h-full w-full flex-col justify-between gap-2 rounded-lg border bg-white  p-4 md:col-span-2 ">
       <div
         ref={animationParent}
         className="flex max-h-[50vh] min-h-full flex-col gap-2 overflow-y-auto p-4"
@@ -144,16 +143,17 @@ function TemplateEditor({ id, inputmessages }: BlockProps) {
                       placeholder={message.role + " message text"}
                       defaultValue={message.content}
                       onInput={(e) => {
-                        let newMessages = [
-                          ...messages.splice(0, index),
-                          {
-                            role: message.role,
-                            content: e.currentTarget.value,
-                          },
-                          ...messages.splice(index + 1),
-                        ];
-
-                        setMessages(newMessages);
+                        const updatedMessages = messages.map((message, idx) => {
+                          if (idx === index) {
+                            return {
+                              ...message,
+                              content: e.currentTarget.value,
+                            };
+                          } else {
+                            return message;
+                          }
+                        });
+                        setMessages(updatedMessages);
                       }}
                     />
                   )}
