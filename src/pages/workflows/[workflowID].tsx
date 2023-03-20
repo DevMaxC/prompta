@@ -195,11 +195,8 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                             ...flow,
                             components: newComponents,
                           });
-
-                          // disable button for 1 second
-                          e.currentTarget.setAttribute("valid", "true");
                         }}
-                        className="rounded-lg p-1 transition valid:bg-green-500/20 hover:cursor-pointer disabled:cursor-wait disabled:opacity-50"
+                        className="rounded-lg p-1 transition hover:cursor-pointer  hover:bg-white/20 disabled:cursor-wait disabled:opacity-50"
                       >
                         <RefreshCw className="" size={20} />
                       </a>
