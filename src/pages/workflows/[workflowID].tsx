@@ -13,7 +13,15 @@ import {
   flowRequest,
   flowResponse,
 } from "~/utils/types";
-import { Plus, PlusIcon, XIcon } from "lucide-react";
+import {
+  Delete,
+  Plus,
+  PlusIcon,
+  RefreshCw,
+  Trash,
+  TrashIcon,
+  XIcon,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -30,6 +38,29 @@ import {
 import Connect from "~/components/Connect";
 import Link from "next/link";
 import { Input } from "~/components/ui/input";
+
+export function detectRequiredVariables(
+  messages: { role: "user" | "assistant" | "system"; content: string }[]
+) {
+  console.log(messages);
+  const requiredVariables: string[] = [];
+
+  // In new version, variable cannot have spaces in them, if there is a space, it is not variable and the user is just trying to type
+  messages.forEach((message) => {
+    const regex = /{([^}]+)}/g;
+    let match;
+    while ((match = regex.exec(message.content))) {
+      if (!match[1] || match[1].includes(" ")) {
+        //do nothing
+      } else {
+        requiredVariables.push(match[1] as string);
+      }
+    }
+  });
+
+  console.log(requiredVariables);
+  return requiredVariables;
+}
 
 export default function WorkflowEditor() {
   const router = useRouter();
@@ -133,17 +164,56 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                     <Label className="font-semibold capitalize">
                       {component.type}
                     </Label>
-                    {myBlocks.data
-                      ?.map((block, index) => {
-                        return block.id;
-                      })
-                      .includes(component.blockID) && (
-                      <Link href={`/blocks/${component.blockID}`}>
-                        <Label className="hover:cursor-pointer">
-                          Visit Block
-                        </Label>
-                      </Link>
-                    )}
+                    <div className="flex items-center gap-4">
+                      {myBlocks.data
+                        ?.map((block, index) => {
+                          return block.id;
+                        })
+                        .includes(component.blockID) && (
+                        <Link href={`/blocks/${component.blockID}`}>
+                          <Label className="hover:cursor-pointer">
+                            Visit Block
+                          </Label>
+                        </Link>
+                      )}
+                      <a
+                        onClick={() => {
+                          // using detectRequiredVariables
+                          const newComponents = flow.components;
+                          const myBlock = newComponents[index] as flowBlock;
+                          myBlock.requiredVariables = detectRequiredVariables(
+                            myBlocks.data?.find(
+                              (block) => block.id === component.blockID
+                            )?.messages as {
+                              role: "user" | "assistant" | "system";
+                              content: string;
+                            }[]
+                          );
+                          setFlow({
+                            ...flow,
+                            components: newComponents,
+                          });
+                        }}
+                        className="rounded-lg p-1 transition hover:cursor-pointer hover:bg-white/20"
+                      >
+                        <RefreshCw className="" size={20} />
+                      </a>
+                      <a
+                        onClick={() => {
+                          // without using splice
+                          const newComponents = flow.components.filter(
+                            (item, i) => i !== index
+                          );
+                          setFlow({
+                            ...flow,
+                            components: newComponents,
+                          });
+                        }}
+                        className="rounded-lg p-1 transition hover:cursor-pointer hover:bg-red-500/70"
+                      >
+                        <Trash className="" size={20} />
+                      </a>
+                    </div>
                   </div>
                 </div>
                 {myBlocks.data && component.requiredVariables.length > 0 && (
@@ -517,37 +587,6 @@ function AddComponentDialogue({
     console.log(newFlow);
   }
 
-  function detectRequiredVariables(
-    messages: { role: "user" | "assistant" | "system"; content: string }[]
-  ) {
-    console.log(messages);
-    const requiredVariables: string[] = [];
-    //search for {variable} in messages
-    messages.forEach((message) => {
-      const regex = /{([^}]+)}/g;
-      let match;
-      while ((match = regex.exec(message.content))) {
-        requiredVariables.push(match[1] as string);
-      }
-    });
-
-    // In new version, variable cannot have spaces in them, if there is a space, it is not variable and the user is just trying to type
-    // messages.forEach((message) => {
-    //   const regex = /{([^}]+)}/g;
-    //   let match;
-    //   while ((match = regex.exec(message.content))) {
-    //     if (match[1].includes(" ")) {
-    //       //do nothing
-    //     } else {
-    //       requiredVariables.push(match[1] as string);
-    //     }
-    //   }
-    // });
-
-    console.log(requiredVariables);
-    return requiredVariables;
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="absolute bottom-0 left-1/2 translate-y-1/2 rounded-full border bg-white p-2 opacity-0 drop-shadow-md transition-all group-hover:opacity-100 peer-focus:opacity-100"></DropdownMenuTrigger>
@@ -581,10 +620,11 @@ function AddComponentDialogue({
                           blockID: component.id,
                           outputVar: "output",
                           requiredVariables: detectRequiredVariables(
-                            component.messages as {
-                              role: "user" | "assistant" | "system";
-                              content: string;
-                            }[]
+                            component.messages as
+                              | {
+                                  role: "user" | "assistant" | "system";
+                                  content: string;
+                                }[]
                           ),
                         })
                       }
