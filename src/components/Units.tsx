@@ -84,7 +84,7 @@ export default function Units({ id, refetch }: UnitProps) {
         variant: "destructive",
         description: "Set your key in Settings to run tests on your blocks",
         action: (
-          <ToastAction altText="Visit Settings">
+          <ToastAction asChild altText="Visit Settings">
             <Link href="/settings">Visit Settings</Link>
           </ToastAction>
         ),
