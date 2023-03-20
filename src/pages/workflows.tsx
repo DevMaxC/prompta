@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { api, getBaseUrl } from "~/utils/api";
 
 import { useRouter } from "next/router";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ export default function Workflows() {
     },
   });
 
+  const [animationParent] = useAutoAnimate();
   return (
     <main className="min-h-screen bg-slate-100">
       <div>
@@ -53,7 +55,7 @@ export default function Workflows() {
             Create Workflow
           </Button>
         </div>
-        <div className="mt-4 flex flex-col gap-2">
+        <div ref={animationParent} className="mt-4 flex flex-col gap-2">
           {allFlows.data?.map((flow) => (
             <div
               onDoubleClick={() => router.push(`/workflows/${flow.id}`)}
