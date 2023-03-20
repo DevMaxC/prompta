@@ -53,7 +53,7 @@ export default function Blocks() {
         </div>
         <div
           ref={animationParent}
-          className="grid w-full grid-cols-4 justify-center gap-4 p-4"
+          className="grid w-full grid-cols-2 justify-center gap-4 p-4 sm:grid-cols-3 md:grid-cols-4"
         >
           {blockQuery.data?.map((block) => (
             <Block

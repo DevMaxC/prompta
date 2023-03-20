@@ -45,10 +45,16 @@ export function Nav() {
       </div>
       <div className="flex items-center gap-4">
         {session && (
-          <div className="flex items-center gap-4">
-            <Link href="/workflows">Workflows</Link>
-            <Link href="/blocks">Blocks</Link>
-            <h1 className="cursor-not-allowed">Playground</h1>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link className="text-xs sm:text-base" href="/workflows">
+              Workflows
+            </Link>
+            <Link className="text-xs sm:text-base" href="/blocks">
+              Blocks
+            </Link>
+            <h1 className="cursor-not-allowed text-xs sm:text-base">
+              Playground
+            </h1>
             <DropdownMenu>
               <DropdownMenuTrigger className="rounded-full p-0.5">
                 <Avatar>

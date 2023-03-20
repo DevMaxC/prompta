@@ -34,6 +34,7 @@ import { api } from "~/utils/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ToastAction } from "./ui/toast";
 import Link from "next/link";
+import { Eye, Play } from "lucide-react";
 
 interface UnitProps {
   id: string;
@@ -104,18 +105,32 @@ export default function Units({ id, refetch }: UnitProps) {
           <h1 className="text-lg font-semibold">
             Units - {unitsQuery.data?.length || 0}
           </h1>
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-4">
             <CollapsibleTrigger className="rounded-lg px-3 font-semibold transition hover:bg-slate-100">
-              <Label className="hover:cursor-pointer">Hide/Show</Label>
+              <Label className="hidden hover:cursor-pointer sm:block">
+                Hide/Show
+              </Label>
+              <Eye size={16} className="block sm:hidden" />
             </CollapsibleTrigger>
             <Button
               disabled={
                 unitsQuery.data && unitsQuery.data.length > 0 ? false : true
               }
+              className="hidden sm:block"
               variant={"ghost"}
               onClick={runTest}
             >
               Run all tests
+            </Button>
+            <Button
+              disabled={
+                unitsQuery.data && unitsQuery.data.length > 0 ? false : true
+              }
+              className="block sm:hidden"
+              variant={"ghost"}
+              onClick={runTest}
+            >
+              <Play size={16} />
             </Button>
             <Button disabled variant={"ghost"}>
               Export

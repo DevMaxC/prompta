@@ -52,15 +52,18 @@ export default function Connect({ flow }: ConnectProps) {
           <TabsContent className="overflow-auto bg-slate-800" value="JS">
             <CodeBlock
               code={[
-                `await fetch("${getMyUrl()}/api/workflows/${flow.id}", {`,
-                `\tmethod: "POST",`,
+                `fetch(${getMyUrl()}/api/v1/workflows/${flow.id}', {`,
+                `\tmethod: 'POST',`,
                 `\theaders: {`,
-                `\t\t"Content-Type": "application/json",`,
+                `\t\t'Content-Type': 'application/json'`,
                 `\t},`,
                 `\tbody: JSON.stringify({`,
-                `\t\tkey: {YOUR_PROMPTA_API_KEY} `,
-                `\t}),`,
+                `\t\tkey: '{YOUR_PROMPTA_API_KEY}',`,
+                `\t\tvariables: { variable: "value to replace 'variable' with" }`,
+                `\t})`,
                 `})`,
+                `.then(response => response.json())`,
+                `.then(data => console.log(data))`,
               ]}
             />
           </TabsContent>
@@ -79,9 +82,10 @@ export default function Connect({ flow }: ConnectProps) {
 
                 `test = requests.post("${getMyUrl()}/api/v1/workflows/${
                   flow.id
-                }", {`,
+                }",`,
                 `\tdata = json.dumps(payload)`,
                 `)`,
+                `print(test.json())`,
               ]}
             />
           </TabsContent>
