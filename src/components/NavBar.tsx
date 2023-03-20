@@ -59,12 +59,11 @@ export function Nav() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push("/settings")}
-                  className="flex gap-2"
-                >
-                  <Settings size={16} />
-                  Settings
+                <DropdownMenuItem asChild className="flex gap-2">
+                  <Link href="/settings">
+                    <Settings size={16} />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled className="flex gap-2">
                   <User size={16} />
@@ -77,14 +76,11 @@ export function Nav() {
                 {/* <DropdownMenuItem disabled>Subscription</DropdownMenuItem> */}
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    router.push("https://discord.gg/R4q5zf7nDR");
-                  }}
-                  className="flex gap-2"
-                >
-                  <SiDiscord size={16} />
-                  <h1>Join Discord</h1>
+                <DropdownMenuItem asChild className="flex gap-2">
+                  <Link href="https://discord.gg/R4q5zf7nDR">
+                    <SiDiscord size={16} />
+                    <h1>Join Discord</h1>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

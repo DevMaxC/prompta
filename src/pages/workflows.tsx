@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
+import Link from "next/link";
 
 export default function Workflows() {
   const allFlows = api.workflow.getAll.useQuery();
@@ -68,23 +69,16 @@ export default function Workflows() {
                       <DropdownMenuLabel>Workflow</DropdownMenuLabel>
                       <DropdownMenuSeparator />
 
-                      <DropdownMenuItem
-                        onClick={() => router.push(`/workflows/${flow.id}`)}
-                      >
-                        Edit
+                      <DropdownMenuItem asChild>
+                        <Link href={`/workflows/${flow.id}/edit`}>Edit</Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled
-                        onClick={() => router.push(`/workflows/${flow.id}`)}
-                      >
-                        Usage
+                      <DropdownMenuItem disabled asChild>
+                        <Link href={`/workflows/${flow.id}/usage`}>Usage</Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          router.push(`/workflows/${flow.id}/settings`);
-                        }}
-                      >
-                        Settings
+                      <DropdownMenuItem asChild>
+                        <Link href={`/workflows/${flow.id}/settings`}>
+                          Settings
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
