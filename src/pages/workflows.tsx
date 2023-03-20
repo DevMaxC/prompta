@@ -43,7 +43,11 @@ export default function Workflows() {
             Workflows - {allFlows.data?.length || 0}
           </h1>
           <Button
-            onClick={() => createFlow.mutate({ name: "New Workflow" })}
+            onClick={() =>
+              createFlow.mutate({
+                name: "New Workflow " + allFlows.data?.length,
+              })
+            }
             variant={"default"}
           >
             Create Workflow

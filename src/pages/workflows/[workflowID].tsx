@@ -158,12 +158,27 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
             return (
               <div
                 key={index}
-                className="group relative w-full rounded-lg bg-blue-500 p-2 text-white"
+                className={`group relative w-full rounded-lg bg-blue-500 p-2 text-white ${
+                  myBlocks.data
+                    ?.map((block, index) => {
+                      return block.id;
+                    })
+                    .includes(component.blockID)
+                    ? "ring-0"
+                    : "ring-2 ring-red-500 ring-offset-2"
+                }`}
               >
                 <div className="mb-2 flex items-center justify-between p-2">
                   <div className="flex w-full justify-between gap-2 ">
                     <Label className="font-semibold capitalize">
-                      {component.type}
+                      {component.type}{" "}
+                      {!myBlocks.data
+                        ?.map((block, index) => {
+                          return block.id;
+                        })
+                        .includes(component.blockID) && (
+                        <span className="text-white">- Block has been deleted</span>
+                      )}
                     </Label>
                     <div className="flex items-center gap-4">
                       {myBlocks.data
