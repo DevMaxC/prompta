@@ -46,6 +46,7 @@ export function detectRequiredVariables(
   const requiredVariables: string[] = [];
 
   // In new version, variable cannot have spaces in them, if there is a space, it is not variable and the user is just trying to type
+  if (!messages || messages.length === 0) return requiredVariables;
   messages.forEach((message) => {
     const regex = /{([^}]+)}/g;
     let match;
@@ -177,8 +178,9 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                         </Link>
                       )}
                       <a
-                        onClick={() => {
+                        onClick={(e) => {
                           // using detectRequiredVariables
+
                           const newComponents = flow.components;
                           const myBlock = newComponents[index] as flowBlock;
                           myBlock.requiredVariables = detectRequiredVariables(
@@ -193,8 +195,11 @@ const WorkflowBlockDisplay = ({ flow, setFlow }: WorkflowBlockDisplayProps) => {
                             ...flow,
                             components: newComponents,
                           });
+
+                          // disable button for 1 second
+                          e.currentTarget.setAttribute("valid", "true");
                         }}
-                        className="rounded-lg p-1 transition hover:cursor-pointer hover:bg-white/20"
+                        className="rounded-lg p-1 transition valid:bg-green-500/20 hover:cursor-pointer disabled:cursor-wait disabled:opacity-50"
                       >
                         <RefreshCw className="" size={20} />
                       </a>
@@ -614,6 +619,10 @@ function AddComponentDialogue({
                   return (
                     <DropdownMenuItem
                       key={index}
+                      disabled={
+                        // @ts-ignore
+                        !component.messages || component.messages.length === 0
+                      }
                       onClick={() =>
                         addComponent({
                           type: "block",
