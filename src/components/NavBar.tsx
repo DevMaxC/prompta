@@ -56,6 +56,9 @@ export function Nav() {
       <div className="flex items-center gap-4">
         {session && (
           <div className="flex items-center gap-2 sm:gap-4">
+            <Link className="text-xs sm:text-base" href="/docs">
+              API Docs
+            </Link>
             <Link className="text-xs sm:text-base" href="/workflows">
               Workflows
             </Link>
