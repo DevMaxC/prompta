@@ -161,7 +161,6 @@ model User {
     email         String?   @unique
     emailVerified DateTime?
     image         String?
-    openaiKey     String?
     accounts      Account[]
     sessions      Session[]
 
@@ -175,6 +174,7 @@ model User {
     stripeCustomerId         String?
     stripeSubscriptionId     String?
 
+
     stripeGptThreePointFiveTurboID  String?
 
     stripeGptFourEightKPromptID  String?
@@ -185,6 +185,8 @@ model User {
 
     stripeSubscriptionStatus StripeSubscriptionStatus?
 }
+
+
 
 model PromptaKey {
     id       String   @id @default(cuid())

@@ -88,4 +88,99 @@ export const stripeRouter = createTRPCRouter({
 
     return { billingPortalUrl: stripeBillingPortalSession.url };
   }),
+  getBillingHistory: protectedProcedure.query(async ({ ctx }) => {
+    const { stripe, session, prisma } = ctx;
+
+    const customerId = await getOrCreateStripeCustomerIdForUser({
+      prisma,
+      stripe,
+      userId: session.user?.id,
+    });
+
+    if (!customerId) {
+      throw new Error("Could not create customer");
+    }
+
+    const stripeInvoices = await stripe.invoices.list({
+      customer: customerId,
+    });
+
+    return stripeInvoices.data.map((invoice) => ({
+      id: invoice.id,
+      amountDue: invoice.amount_due,
+      amountPaid: invoice.amount_paid,
+      amountRemaining: invoice.amount_remaining,
+      date: invoice.due_date,
+      status: invoice.status,
+      subscriptionId: invoice.subscription,
+    }));
+  }),
+  getSubscriptionItemUsage: protectedProcedure.query(async ({ ctx }) => {
+    const { stripe, session, prisma } = ctx;
+
+    const customerId = await getOrCreateStripeCustomerIdForUser({
+      prisma,
+      stripe,
+      userId: session.user?.id,
+    });
+
+    if (!customerId) {
+      throw new Error("Could not create customer");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user?.id,
+      },
+    });
+
+    if (!user) {
+      throw new Error("Could not find user");
+    }
+
+    if (
+      !user.stripeGptThreePointFiveTurboID ||
+      !user.stripeGptFourEightKPromptID ||
+      !user.stripeGptFourEightKCompletionID ||
+      !user.stripeGptFourThirtyTwoKPromptID ||
+      !user.stripeGptFourThirtyTwoKCompletionID
+    ) {
+      throw new Error("Could not find subscription");
+    }
+
+    // gpt-3.5-turbo
+    const turbo = await stripe.subscriptionItems.listUsageRecordSummaries(
+      user?.stripeGptThreePointFiveTurboID
+    );
+
+    const fourEightPrompt =
+      await stripe.subscriptionItems.listUsageRecordSummaries(
+        user?.stripeGptFourEightKPromptID
+      );
+
+    const fourEightCompletion =
+      await stripe.subscriptionItems.listUsageRecordSummaries(
+        user?.stripeGptFourEightKCompletionID
+      );
+
+    const fourThirtyTwoPrompt =
+      await stripe.subscriptionItems.listUsageRecordSummaries(
+        user?.stripeGptFourThirtyTwoKPromptID
+      );
+
+    const fourThirtyTwoCompletion =
+      await stripe.subscriptionItems.listUsageRecordSummaries(
+        user?.stripeGptFourThirtyTwoKCompletionID
+      );
+
+    const subscriptionItemUsage = {
+      turbo: turbo.data[0],
+      fourEightPrompt: fourEightPrompt.data[0],
+      fourEightCompletion: fourEightCompletion.data[0],
+      fourThirtyTwoPrompt: fourThirtyTwoPrompt.data[0],
+      fourThirtyTwoCompletion: fourThirtyTwoCompletion.data[0],
+    };
+
+    return subscriptionItemUsage;
+  }),
 });

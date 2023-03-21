@@ -87,20 +87,7 @@ export function Nav() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={async () => {
-                    if (
-                      getUserQuery.data?.stripeSubscriptionStatus === "active"
-                    ) {
-                      const { billingPortalUrl } =
-                        await createBillingPortalSession();
-                      if (billingPortalUrl) {
-                        void push(billingPortalUrl);
-                      }
-                    }
-
-                    const { checkoutUrl } = await createCheckoutSession();
-                    if (checkoutUrl) {
-                      void push(checkoutUrl);
-                    }
+                    router.push("/billing");
                   }}
                   className="flex gap-2"
                 >
