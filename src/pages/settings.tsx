@@ -10,7 +10,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export default function settings() {
-  const keyMut = api.user.updateKey.useMutation();
   const [showKey, setShowKey] = useState(false);
 
   const user = api.user.getUser.useQuery();

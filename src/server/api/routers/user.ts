@@ -14,21 +14,6 @@ export const userRouter = createTRPCRouter({
     return user;
   }),
 
-  updateKey: protectedProcedure
-    .input(
-      z.object({
-        key: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const user = await ctx.prisma.user.update({
-        where: { id: ctx.session.user.id },
-        data: {
-          openaiKey: input.key,
-        },
-      });
-      return user;
-    }),
 
   subscriptionStatus: protectedProcedure.query(async ({ ctx }) => {
     const { session, prisma } = ctx;
