@@ -128,6 +128,11 @@ export const handleSubscriptionCanceled = async ({
     data: {
       stripeSubscriptionId: null,
       stripeSubscriptionStatus: null,
+      stripeGptFourEightKCompletionID: null,
+      stripeGptFourEightKPromptID: null,
+      stripeGptFourThirtyTwoKCompletionID: null,
+      stripeGptFourThirtyTwoKPromptID: null,
+      stripeGptThreePointFiveTurboID: null,
     },
   });
 };
