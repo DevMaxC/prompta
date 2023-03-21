@@ -12,6 +12,8 @@ import {
 
 // import the prisma client
 import { prisma } from "../../../../server/db";
+import complete from "~/utils/complete";
+import { env } from "~/env.mjs";
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,12 +52,18 @@ export default async function handler(
       throw new Error("Invalid key");
     }
 
-    if (workflow?.user.openaiKey === null)
-      throw new Error("OpenAI key not found");
-    const configuration = new Configuration({
-      apiKey: workflow.user.openaiKey,
-    });
-    const openai = new OpenAIApi(configuration);
+    const model = req.body.model || "gpt-3.5-turbo";
+    if (!workflow.user.hasGPT4Access) {
+      if (model === "gpt-4") {
+        res.status(400).json({ error: "You dont have access to GPT-4" });
+        return;
+      }
+    }
+
+    if (model !== "gpt-3.5-turbo" && model !== "gpt-4") {
+      res.status(400).json({ error: "Invalid model" });
+      return;
+    }
 
     if (workflow === null) throw new Error("Workflow not found");
 
@@ -154,10 +162,20 @@ export default async function handler(
         // run the block
 
         const time = new Date().getTime();
-        const completion = await openai.createChatCompletion({
-          model: "gpt-3.5-turbo",
-          messages: messages,
-        });
+
+        const completion = await complete(messages, model, workflow.user.id);
+
+        if (!completion) {
+          res.status(400).json({
+            error:
+              "Something failed in the completion, check you have stripe billing set up",
+          });
+          return;
+        }
+        // const completion = await openai.createChatCompletion({
+        //   model: "gpt-3.5-turbo",
+        //   messages: messages,
+        // });
         const time2 = new Date().getTime();
         console.log(time2 - time);
 

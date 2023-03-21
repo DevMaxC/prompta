@@ -50,6 +50,7 @@ export const unitsRouter = createTRPCRouter({
           },
         },
       });
+      ctx.stripe
       if (unit?.block.userId !== ctx.session.user.id) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       } else {

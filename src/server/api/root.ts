@@ -6,6 +6,7 @@ import { batchRouter } from "./routers/batch";
 import { userRouter } from "./routers/user";
 import { workflowRouter } from "./routers/workflow";
 import { keysRouter } from "./routers/keys";
+import { stripeRouter } from "./routers/stripe";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   workflow: workflowRouter,
   keys: keysRouter,
+  stripe: stripeRouter,
 });
 
 // export type definition of API

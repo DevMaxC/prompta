@@ -169,6 +169,21 @@ model User {
     workflows     Workflow[]
     promptaKeys   PromptaKey[]
     chains        Chain[]
+
+    hasGPT4Access Boolean   @default(false)
+
+    stripeCustomerId         String?
+    stripeSubscriptionId     String?
+
+    stripeGptThreePointFiveTurboID  String?
+
+    stripeGptFourEightKPromptID  String?
+    stripeGptFourEightKCompletionID  String?
+
+    stripeGptFourThirtyTwoKPromptID  String?
+    stripeGptFourThirtyTwoKCompletionID  String?
+
+    stripeSubscriptionStatus StripeSubscriptionStatus?
 }
 
 model PromptaKey {
@@ -192,3 +207,26 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model StripeEvent {
+    id               String   @id @unique
+    api_version      String?
+    data             Json
+    request          Json?
+    type             String
+    object           String
+    account          String?
+    created          DateTime
+    livemode         Boolean
+    pending_webhooks Int
+}
+
+enum StripeSubscriptionStatus {
+    incomplete
+    incomplete_expired
+    trialing
+    active
+    past_due
+    canceled
+    unpaid
+    paused
+}

@@ -38,6 +38,16 @@ export function Nav() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const { mutateAsync: createCheckoutSession } =
+    api.stripe.createCheckoutSession.useMutation();
+
+  const { mutateAsync: createBillingPortalSession } =
+    api.stripe.createBillingPortalSession.useMutation();
+
+  const { push } = useRouter();
+
+  const getUserQuery = api.user.getUser.useQuery();
+
   return (
     <nav className="flex w-full items-center justify-between border-b border-black/10 p-4">
       <div>
@@ -75,7 +85,25 @@ export function Nav() {
                   <User size={16} />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem disabled className="flex gap-2">
+                <DropdownMenuItem
+                  onClick={async () => {
+                    if (
+                      getUserQuery.data?.stripeSubscriptionStatus === "active"
+                    ) {
+                      const { billingPortalUrl } =
+                        await createBillingPortalSession();
+                      if (billingPortalUrl) {
+                        void push(billingPortalUrl);
+                      }
+                    }
+
+                    const { checkoutUrl } = await createCheckoutSession();
+                    if (checkoutUrl) {
+                      void push(checkoutUrl);
+                    }
+                  }}
+                  className="flex gap-2"
+                >
                   <CreditCard size={16} />
                   Billing
                 </DropdownMenuItem>

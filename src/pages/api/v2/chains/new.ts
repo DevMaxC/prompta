@@ -12,6 +12,7 @@ import {
 
 // import the prisma client
 import { prisma } from "../../../../server/db";
+import complete from "~/utils/complete";
 
 export default async function handler(
   req: NextApiRequest,
@@ -111,23 +112,36 @@ export default async function handler(
     }
   }
 
-  if (user.user.openaiKey === null) {
-    res.status(400).json({ error: "No openai key set in settings" });
+  //perform the completion
+
+  const model = req.body.model || "gpt-3.5-turbo";
+  if (!user.user.hasGPT4Access) {
+    if (model === "gpt-4") {
+      res.status(400).json({ error: "You dont have access to GPT-4" });
+      return;
+    }
+  }
+
+  if (model !== "gpt-3.5-turbo" && model !== "gpt-4") {
+    res.status(400).json({ error: "Invalid model" });
     return;
   }
 
-  //perform the completion
-  const configuration = new Configuration({
-    apiKey: user.user.openaiKey,
-  });
-  const openai = new OpenAIApi(configuration);
-
-  const model = req.body.model || "gpt-3.5-turbo";
   const time = new Date().getTime();
-  const completion = await openai.createChatCompletion({
-    model: model,
-    messages: starterMessages,
-  });
+  // const completion = await openai.createChatCompletion({
+  //   model: model,
+  //   messages: starterMessages,
+  // });
+
+  const completion = await complete(starterMessages, model, user.user.id);
+
+  if (!completion) {
+    res.status(400).json({
+      error:
+        "Something failed in the completion, check you have stripe billing set up",
+    });
+    return;
+  }
 
   const time2 = new Date().getTime();
   console.log(time2 - time);
@@ -153,5 +167,4 @@ export default async function handler(
     messages: completion.data.choices[0].message?.content || "",
     chainID: createdChain.id,
   });
-  
 }
