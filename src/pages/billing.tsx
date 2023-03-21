@@ -64,33 +64,7 @@ export default function billing() {
                   </div>
                 )}
               </div>
-              <div className="rounded-lg border  p-4">
-                <h1>History</h1>
 
-                {userQuery.data?.stripeSubscriptionStatus === "active" ? (
-                  <div className="flex items-center justify-between gap-4">
-                    <Label>
-                      View all of your billing history and invoices.
-                    </Label>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between gap-4">
-                    <Label>
-                      To use the api you need to set up billing with stripe
-                    </Label>
-                    <Button
-                      onClick={async () => {
-                        const session = await createCheckoutSession();
-
-                        if (session.checkoutUrl) push(session?.checkoutUrl);
-                      }}
-                    >
-                      {" "}
-                      Visit Stripe{" "}
-                    </Button>
-                  </div>
-                )}
-              </div>
               {usage.data && (
                 <div className="rounded-lg border  p-4">
                   <h1>Usage</h1>
@@ -133,7 +107,8 @@ export default function billing() {
                       <div className="flex items-center justify-between gap-4">
                         <Label>GPT4 32K Completion Tokens</Label>
                         <Label>
-                          {usage.data.fourThirtyTwoCompletion?.total_usage} Tokens
+                          {usage.data.fourThirtyTwoCompletion?.total_usage}{" "}
+                          Tokens
                         </Label>
                       </div>
                     ) : (
