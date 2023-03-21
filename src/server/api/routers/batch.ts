@@ -7,6 +7,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import complete from "~/utils/complete";
 
 type Message = {
   role: "user" | "assistant" | "system";
@@ -73,25 +74,19 @@ export const batchRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const key = await ctx.prisma.user
-        .findUnique({
-          where: { id: ctx.session.user.id },
-        })
-        .then((user) => {
-          if (user == null || user.openaiKey == null) {
-            throw new TRPCError({
-              message: "No OpenAI key was set in your account.",
-              code: "BAD_REQUEST",
-            });
-          } else {
-            return user.openaiKey;
-          }
-        });
-
-      const configuration = new Configuration({
-        apiKey: key,
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.session.user.id },
       });
-      const openai = new OpenAIApi(configuration);
+      if (user == null) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+      if (user.stripeSubscriptionStatus !== "active") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You need to have billing enabled to use this feature.",
+        });
+      }
+
       //check if block is owned by user
       const block = await ctx.prisma.block.findUnique({
         where: { id: input.blockId },
@@ -142,37 +137,35 @@ export const batchRouter = createTRPCRouter({
 
                   console.log(messages);
 
-                  const completion = await openai
-                    .createChatCompletion({
-                      model: "gpt-3.5-turbo",
-                      messages: messages,
-                    })
-                    .then(async (completion) => {
-                      const response = completion.data.choices[0]?.message;
+                  const completion = await complete(
+                    messages,
+                    "gpt-3.5-turbo",
+                    user?.id
+                  );
 
-                      console.log(response);
+                  if (completion == null) {
+                    throw new TRPCError({ code: "BAD_REQUEST" });
+                  }
 
-                      //short uuid
-                      const uuid = Math.random().toString(36).substring(2, 15);
+                  const response = completion.data.choices[0]?.message;
 
-                      await ctx.prisma.testCompletion.create({
-                        data: {
-                          actual: response?.content || "<No response>",
-                          expected: ideal,
-                          content: unit.content,
-                          batch: {
-                            connect: { id: newBatch.id },
-                          },
-                          name: unit.name + "-" + uuid,
-                          success: response?.content.includes(ideal) || false,
-                        },
-                      });
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                      console.log("error");
-                      console.log(messages);
-                    });
+                  console.log(response);
+
+                  //short uuid
+                  const uuid = Math.random().toString(36).substring(2, 15);
+
+                  await ctx.prisma.testCompletion.create({
+                    data: {
+                      actual: response?.content || "<No response>",
+                      expected: ideal,
+                      content: unit.content,
+                      batch: {
+                        connect: { id: newBatch.id },
+                      },
+                      name: unit.name + "-" + uuid,
+                      success: response?.content.includes(ideal) || false,
+                    },
+                  });
                 });
             }
           }

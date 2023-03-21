@@ -10,7 +10,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export default function settings() {
-  const keyMut = api.user.updateKey.useMutation();
   const [showKey, setShowKey] = useState(false);
 
   const user = api.user.getUser.useQuery();
@@ -38,34 +37,6 @@ export default function settings() {
 
       <div className="mx-auto flex max-w-6xl flex-col p-4">
         <h1 className="p-2 text-lg font-bold">Settings</h1>
-        <div className="mb-4 flex flex-col gap-2 rounded-lg border bg-white p-4">
-          <Label htmlFor="key">Open AI Key</Label>
-          <div className="relative">
-            {user.data && (
-              <div>
-                <Input
-                  defaultValue={user.data.openaiKey || ""}
-                  onInput={(e) => {
-                    keyMut.mutate({ key: e.currentTarget.value });
-                  }}
-                  id="key"
-                  placeholder="sk-hf48*****dbkg"
-                  type={showKey ? "text" : "password"}
-                />
-
-                <Toggle
-                  className="absolute right-0 top-0 hover:bg-transparent"
-                  pressed={showKey}
-                  onPressedChange={() => {
-                    setShowKey(!showKey);
-                  }}
-                >
-                  Show
-                </Toggle>
-              </div>
-            )}
-          </div>
-        </div>
         <div className="flex flex-col gap-2 rounded-lg border bg-white p-4">
           <Label htmlFor="key">Prompta Keys - {keys.data?.length || 0}</Label>
           <div className="relative">

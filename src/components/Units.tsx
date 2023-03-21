@@ -79,14 +79,14 @@ export default function Units({ id, refetch }: UnitProps) {
   const { toast } = useToast();
 
   function runTest() {
-    if (user.data?.openaiKey == null || user.data?.openaiKey == "") {
+    if (user.data?.stripeSubscriptionStatus !== "active") {
       toast({
-        title: "OpenAI Key not set!",
+        title: "No Billing Information!",
         variant: "destructive",
-        description: "Set your key in Settings to run tests on your blocks",
+        description: "You havent set up billing information yet.",
         action: (
           <ToastAction asChild altText="Visit Settings">
-            <Link href="/settings">Visit Settings</Link>
+            <Link href="/billing">Visit Billing</Link>
           </ToastAction>
         ),
       });
