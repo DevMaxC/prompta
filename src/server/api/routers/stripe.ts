@@ -43,8 +43,8 @@ export const stripeRouter = createTRPCRouter({
           price: env.STRIPE_GPT4_8_PROMPT_PRICE_ID,
         },
       ],
-      success_url: `${baseUrl}/dashboard?checkoutSuccess=true`,
-      cancel_url: `${baseUrl}/dashboard?checkoutCanceled=true`,
+      success_url: `${baseUrl}/billing?checkoutSuccess=true`,
+      cancel_url: `${baseUrl}/billing?checkoutCanceled=true`,
       subscription_data: {
         metadata: {
           userId: session.user?.id,
