@@ -25,6 +25,8 @@ export default async function handler(
 
   const { chainAPI } = req.query;
 
+  req.body = JSON.parse(req.body);
+
   //check if the user provided the key
   if (!req.body.promptaKey) {
     res.status(400).json({ error: "No key provided" });
