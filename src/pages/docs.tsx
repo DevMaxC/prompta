@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Nav } from "~/components/NavBar";
+import { Button } from "~/components/ui/button";
 
 type DocsPlaces = {
   title: string;
@@ -10,6 +11,7 @@ export default function Docs() {
   const [places, setPlaces] = useState<DocsPlaces[]>([
     { title: "Workflows", ref: useRef<HTMLDivElement>(null) },
     { title: "Chains", ref: useRef<HTMLDivElement>(null) },
+    { title: "Chains API Example", ref: useRef<HTMLDivElement>(null) },
   ]);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
@@ -18,7 +20,7 @@ export default function Docs() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      <div className="sticky top-0 bg-slate-100">
+      <div className="sticky top-0 z-50 bg-slate-100">
         <Nav />
       </div>
       <div className="flex">
@@ -39,12 +41,13 @@ const Sidebar = ({ places, scrollToSection }: SidebarProps) => {
       <ul className="font-semibold text-blue-600">
         {places.map((place, index) => (
           <li key={index} className="mb-4 text-lg">
-            <button
-              className="text-blue-600 hover:text-blue-800 focus:outline-none"
+            <Button
+              variant={"ghost"}
+              className="w-full"
               onClick={() => scrollToSection(place.ref)}
             >
               {place.title}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
@@ -113,6 +116,16 @@ const MainContent = ({ places }: MainContentProps) => {
 }`}
           </code>
         </pre>
+        <h4 className="mt-4 font-semibold text-blue-500">Example video</h4>
+        <div className="relative overflow-hidden pt-[56.25%]">
+          <iframe
+            className=" absolute top-0 left-0 h-full w-full rounded-lg"
+            src="https://www.youtube.com/embed/B0CRZ_f8Obc"
+            title="Blocks Example"
+            frameBorder="0"
+            allowFullScreen
+          ></iframe>
+        </div>
       </section>
 
       <section ref={places[1]?.ref}>
@@ -228,6 +241,23 @@ const MainContent = ({ places }: MainContentProps) => {
 }`}
           </code>
         </pre>
+      </section>
+      <section className="rounded bg-white p-4 shadow" ref={places[2]?.ref}>
+        <h2 className="mb-2 text-2xl font-semibold text-blue-700">
+          Chain Example
+        </h2>
+        <p className="text-gray-700">
+          In this example, we will demonstrate how to create and use chains.
+        </p>
+        <div className="relative overflow-hidden pt-[56.25%]">
+          <iframe
+            className="absolute top-0 left-0 h-full w-full rounded-lg"
+            src="https://www.youtube.com/embed/MBtRPWyuqQs"
+            title="Chain Example"
+            frameBorder="0"
+            allowFullScreen
+          ></iframe>
+        </div>
       </section>
     </main>
   );
