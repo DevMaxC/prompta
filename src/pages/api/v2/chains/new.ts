@@ -35,18 +35,18 @@ export default async function handler(
 
   //begin writing the code
 
-  if (req.headers['content-type'] === 'application/json') {
-    if (typeof req.body === 'string') {
+  if (req.headers["content-type"] === "application/json") {
+    if (typeof req.body === "string") {
       try {
         req.body = JSON.parse(req.body);
       } catch (error) {
-        console.error('Error parsing JSON:', error);
-        return res.status(400).json({ error: 'Invalid JSON format' });
+        console.error("Error parsing JSON:", error);
+        return res.status(400).json({ error: "Invalid JSON format" });
       }
     }
   } else {
-    console.error('Unexpected content type:', req.headers['content-type']);
-    return res.status(400).json({ error: 'Unsupported content type' });
+    console.error("Unexpected content type:", req.headers["content-type"]);
+    return res.status(400).json({ error: "Unsupported content type" });
   }
 
   //check if the user provided the key
@@ -67,16 +67,22 @@ export default async function handler(
     },
   });
 
+  console.log("found user");
+
   if (user === null) {
     res.status(400).json({ error: "Invalid key" });
     return;
   }
+
+  console.log("user is valid");
 
   //check if the user provided the messages
   if (!req.body.messages && !req.body.starterBlockID) {
     res.status(400).json({ error: "No messages or starterBlockID provided" });
     return;
   }
+
+  console.log("messages or starterBlockID provided");
 
   let starterMessages = [];
   //check if the user provided the messages
@@ -105,6 +111,8 @@ export default async function handler(
     }[];
   }
 
+  console.log("starterMessages", starterMessages);
+
   //check if the user provided the variables
   let variables = {};
   if (req.body.variables) {
@@ -126,6 +134,8 @@ export default async function handler(
     }
   }
 
+  console.log("starterMessages", starterMessages);
+
   //perform the completion
 
   const model = req.body.model || "gpt-3.5-turbo";
@@ -135,6 +145,8 @@ export default async function handler(
       return;
     }
   }
+
+  console.log("model", model);
 
   if (model !== "gpt-3.5-turbo" && model !== "gpt-4") {
     res.status(400).json({ error: "Invalid model" });
@@ -147,7 +159,9 @@ export default async function handler(
   //   messages: starterMessages,
   // });
 
+  console.log("completion starting");
   const completion = await complete(starterMessages, model, user.user.id);
+  console.log("completion done");
 
   if (!completion) {
     res.status(400).json({
@@ -176,9 +190,13 @@ export default async function handler(
     },
   });
 
+  console.log("createdChain", createdChain);
+
   // return the response
   res.status(200).json({
     messages: completion.data.choices[0].message?.content || "",
     chainID: createdChain.id,
   });
+
+  console.log("done");
 }
