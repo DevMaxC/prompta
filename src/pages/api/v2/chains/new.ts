@@ -39,6 +39,7 @@ export default async function handler(
     if (typeof req.body === "string") {
       try {
         req.body = JSON.parse(req.body);
+        console.log("parsed body");
       } catch (error) {
         console.error("Error parsing JSON:", error);
         return res.status(400).json({ error: "Invalid JSON format" });
@@ -50,13 +51,13 @@ export default async function handler(
   }
 
   //check if the user provided the key
-  console.log(req.body);
+  console.log(req.body, typeof req.body);
 
-  req.body = JSON.parse(req.body);
-  if (!req.body.promptaKey) {
-    res.status(400).json({ error: "No key provided" });
-    return;
-  }
+  // req.body = JSON.parse(req.body);
+  // if (!req.body.promptaKey) {
+  //   res.status(400).json({ error: "No key provided" });
+  //   return;
+  // }
 
   const user = await prisma.promptaKey.findUnique({
     where: {
