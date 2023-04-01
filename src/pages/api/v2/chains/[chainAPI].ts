@@ -25,7 +25,20 @@ export default async function handler(
 
   const { chainAPI } = req.query;
 
-  req.body = JSON.parse(req.body);
+  if (req.headers["content-type"] === "application/json") {
+    if (typeof req.body === "string") {
+      try {
+        req.body = JSON.parse(req.body);
+        console.log("parsed body");
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return res.status(400).json({ error: "Invalid JSON format" });
+      }
+    }
+  } else {
+    console.error("Unexpected content type:", req.headers["content-type"]);
+    return res.status(400).json({ error: "Unsupported content type" });
+  }
 
   //check if the user provided the key
   if (!req.body.promptaKey) {
