@@ -6,6 +6,8 @@ import { api, getBaseUrl } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
+import { useRef, useState, useEffect, FocusEvent } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +35,20 @@ export default function Workflows() {
     },
   });
 
+  const divRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = (e: FocusEvent<HTMLDivElement, Element>) => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = (e: FocusEvent<HTMLDivElement, Element>) => {
+    const { relatedTarget } = e;
+    if (!relatedTarget || relatedTarget.tagName !== "INPUT") {
+      setIsFocused(false);
+    }
+  };
+
   const [animationParent] = useAutoAnimate();
   return (
     <main className="min-h-screen bg-slate-100">
@@ -58,9 +74,14 @@ export default function Workflows() {
         <div ref={animationParent} className="mt-4 flex flex-col gap-2">
           {allFlows.data?.map((flow) => (
             <div
+              tabIndex={0}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onDoubleClick={() => router.push(`/workflows/${flow.id}`)}
               key={flow.id}
-              className=" rounded-lg border bg-white p-4 transition hover:ring-blue-500 hover:ring-opacity-50 hover:drop-shadow-md"
+              className={`rounded-lg border bg-white p-4 transition hover:ring-blue-500 hover:ring-opacity-50 hover:drop-shadow-md ${
+                isFocused ? "ring-2 ring-blue-500" : ""
+              }`}
             >
               <div className="flex justify-between">
                 <h2 className="text-lg font-semibold">{flow.name}</h2>
