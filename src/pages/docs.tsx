@@ -82,7 +82,8 @@ const MainContent = ({ places }: MainContentProps) => {
         <h4 className="font-semibold text-blue-500">Request Body</h4>
         <ul className="list-disc pl-5 text-gray-700">
           <li>
-            <code>key</code> (string) - The API key for the user.
+            <code>key</code> (optional*, string) - The API key for the user.
+            *Leave blank if workflow is public!
           </li>
           <li>
             <code>variables</code> (object) - The input variables for the
