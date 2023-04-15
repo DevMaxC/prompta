@@ -27,7 +27,7 @@ export default async function handler(
     const body = JSON.parse(req.body);
 
     const promptaKey = body.key as string;
-    if (promptaKey === undefined) throw new Error("Key not provided");
+    
 
     const servervariables = body.variables;
 
@@ -45,6 +45,9 @@ export default async function handler(
       },
     });
     if (workflow === null) throw new Error("Workflow not found");
+
+    if (promptaKey === undefined && workflow.visible === "PRIVATE") throw new Error("Key not provided");
+
     if (
       !workflow.user.promptaKeys.map((key) => key.key).includes(promptaKey) &&
       workflow.visible === "PRIVATE"
