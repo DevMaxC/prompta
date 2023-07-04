@@ -1,28 +1,32 @@
-# Create T3 App
+# Prompta
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+![image](https://github.com/DevMaxC/prompta/assets/20259746/ca858b34-6a86-48b3-bebf-94ae54146df1)
 
-## What's next? How do I make an app with this?
+## About
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Prompta is a handy tool that allows users to save their GPT prompts and effortlessly rerun them via its API. Built with an inbuilt Stripe integration, every API usage gets charged to the user's account, making the process efficient and uncomplicated.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Features
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+* GPT Prompt Saving and Running
+* Integrated Stripe Payment System
 
-## Learn More
+## Technologies Used
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+Prompta is developed using a range of modern technologies including:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+1. NextJS: A React framework for production - it makes developing scalable applications fun and easy.
+2. React: A JavaScript library for building user interfaces.
+3. Tailwind CSS: A utility-first CSS framework packed with classes like flex, pt-4, text-center, and rotate-90 that can be composed to build any design, directly in your markup.
+4. TypeScript: An open-source language which builds on JavaScript, by adding static type definitions.
+5. GPT-4: By openAI
+6. Prisma: Database ORM
+7. Stripe: An online payment processing for internet businesses.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+All of these together create a robust and interactive platform that saves users both time and effort, especially when working with the OpenAI API.
 
-## How do I deploy this?
+## Quick Start
+To Run prompta, clone the repo and run
+`npm run dev`
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+or Deploy the project to Vercel
